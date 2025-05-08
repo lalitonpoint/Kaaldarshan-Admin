@@ -1,0 +1,228 @@
+<?php 
+$path      = base_url().'/uploads/images/'; ?>
+
+<div class="">
+   <div class="bg-white">
+      <div class="container-fluid">
+         <div class="row">
+            <div class="col-md-12">
+               <ul class="nav nav-tabs mobile_app_nav" id="myTab" role="tablist">
+                  <li class="nav-item" role="presentation">
+                     <a class="nav-link active" id="mobile-menu-tab" data-bs-toggle="tab" data-bs-target="#mobile-menu"
+                        type="button" role="tab"  href="#mobile-menu"aria-controls="mobile-menu" aria-selected="true">Edit Category</a>
+                  </li>
+               </ul>
+                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="container-fluid">
+      <div class="row">
+         <div class="col-md-12">
+            <div class="tab-content mabile_app_content mobile_banner_content my-3 " id="myTabContent">
+               <div class="tab-pane fade show active" id="mobile-menu" role="tabpanel"
+                  aria-labelledby="mobile-menu-tab">
+                 
+                  <form class="mobile_menu_form mobile_dash_dt" method="post" id="mobile_menu_update_form" enctype="multipart/form-data" autocomplete="off">
+                     <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?php echo $hashtoken; ?>" />
+                     <input type="hidden" id="CategoryId" name="CategoryId" value="<?php echo $menu->CategoryId; ?>">
+                     <div class="row">
+                        <div class="col-md-6 mb-3">
+                           <label for="fname" class="label_mb_dt mb-1">Category Name<span class="m_star">*</span><span
+                                 class="max_mobile_content">(Maximum 50 Characters allowed)</span></label>
+                           <input type="text" class="form-control" name='UpdateCategoryName' id="UpdateCategoryName" placeholder="Enter Category Name" maxlength="50"  value="<?php echo $menu->CategoryName; ?>">
+                           <span class="text-danger" id="span_UpdateCategoryName"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                           <label for="image_dt" class="label_mb_dt mb-1">Category Thumbnail<span
+                                 class="m_star">*</span><span class="max_mobile_content">(Please select an image less than 1 MB in PNG or JPEG format)</span></label>
+                           <input type="file" accept="image/png,image/jpg,image/jpeg" class="form-control" placeholder="No Image" name='UpdateCategoryThumb' id="UpdateCategoryThumb" onchange="validatethumbimage()">
+                            <span class="text-danger " id="error_UpdateCategoryThumb" ></span>
+
+                        </div>
+                         <div class="col-md-2 mb-3">
+                           <img width="100px;" height="100px;" src="<?php echo $menu->CategoryThumb; ?>">
+                            <span class="text-danger " id="error_thum_image" ></span>
+                            
+                        </div>
+                           <div class="col-md-12 =">
+                           <button type="submit" class="dash_btn update_data" >Update</button>
+                        </div>
+                     </div>
+                  </form>
+
+               </div>
+            </div>
+          </div>
+      </div>
+   </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
+ <script src="<?php echo AUTH_ASSETS; ?>js/select2.min.js"></script>
+ <script src="<?php echo AUTH_ASSETS; ?>js/custom.js"></script>
+<?php 
+$AUTH_ASSETS =AUTH_ASSETS;
+$confirm_sm =get_auth_lang_text('category_update_confirm')['small'];
+$confirm_lg =get_auth_lang_text('category_update_confirm')['large'];
+$confirm_cnf =get_auth_lang_text('category_update_confirm')['btn_cfm'];
+$confirm_cncl =get_auth_lang_text('category_update_confirm')['btn_cncl'];
+$complete_sm =get_auth_lang_text('category_updated')['small'];
+$complete_lg =get_auth_lang_text('category_updated')['large'];
+$edit_mobile_menu= AUTH_PANEL_URL . 'Category/ajax_edit_category';
+
+
+?>
+<script type="text/javascript">
+
+
+
+$(document).ready(function() {
+    $('#UpdateCategoryName').keyup(function() {
+        $('.update_data').attr('disabled', false);
+        $('#span_UpdateCategoryName').html('');
+
+        var name = $('#UpdateCategoryName').val();
+        var sname = name.replace(/\s+/g, ' ');
+        $('#UpdateCategoryName').val(sname);
+
+        if (/[^a-zA-Z0-9-_, ]/.test(sname)) {
+            $('#span_UpdateCategoryName').html('Special characters are not allowed.');
+            $('.update_data').attr('disabled', true);
+        } else {
+            $('#span_UpdateCategoryName').html('');
+            $('.update_data').attr('disabled', false);
+        }
+    });
+});
+
+
+function validatethumbimage() {
+
+    var ThumImage = document.getElementById("UpdateCategoryThumb").value;
+    if (ThumImage)
+        var fileName = ThumImage;
+
+    var a = $("#UpdateCategoryThumb")[0].files[0].size;
+    var idxDot = fileName.lastIndexOf(".") + 1;
+    var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+    //alert(extFile);
+    if (extFile == "png" || extFile == "jpeg" || extFile == "jpg") {
+        if (ThumImage) $('#error_UpdateCategoryThumb').html('');
+         if (a < 990000){
+              if(ThumImage) $('#error_UpdateCategoryThumb').html('');
+          }else{
+              if(ThumImage) $('#error_UpdateCategoryThumb').html('Please select image less than 1 MB');
+              $("#"+this.event.target.id).val('');
+          }  
+    } else {
+        if (ThumImage) $('#error_UpdateCategoryThumb').html('Please select only png/jpg/jpeg format');
+        $("#" + this.event.target.id).val('');
+    }
+     
+}
+
+
+$(document).on('click', '.update_data', function(e){
+         e.preventDefault();
+      $('.text-danger').html('');
+      $(".text-danger").removeAttr("style")
+      var UpdateCategoryName     = $('#UpdateCategoryName').val(); 
+      var UpdateCategoryThumb      = $('#UpdateCategoryThumb').val(); 
+      var ScreenShotPer     = $('#ScreenShotPer').val(); 
+      var return_false = 0; 
+// alert(mmid);
+// alert(weburl);
+
+       if(UpdateCategoryName == ''){
+           $('#span_UpdateCategoryName').html('Please enter Menu Name');
+           $('#UpdateCategoryName').focus();
+           return_false = 1;
+         }else{
+          $('.text-danger').html('');
+        }
+
+
+   if(return_false == 0){  
+     var form = $('#mobile_menu_update_form')[0];
+    var formData = new FormData(form);
+      swal({
+          title: '<?php echo $confirm_sm; ?>',
+          text: '<?php echo $confirm_lg; ?>',
+         // icon: "warning",
+          imageUrl: '<?php echo $AUTH_ASSETS; ?>'+'img/order_confirm.png',
+          imageWidth: 70,
+          imageHeight: 70,
+          imageAlt: 'Custom image',
+          animation: false,
+         confirmButtonColor: '#006BB6',
+         allowOutsideClick: false,
+         cancelButtonColor: '#d33',
+         confirmButtonText: "Yes",
+         showCancelButton: true,
+         confirmButtonText: '<?php echo $confirm_cnf; ?>',
+         cancelButtonText: '<?php echo $confirm_cncl; ?>',
+         // confirmButtonClass: 'btn btn-success me-2',
+         // cancelButtonClass: 'btn btn-danger',
+        }).then((result) => {
+              if (result.value) {
+                $.ajax({
+                 url: "<?php echo $edit_mobile_menu; ?>",
+                 type : 'POST',
+                // data : {menu_name:menu_name,screenshot_per:screenshot_per,entity:entity,menu_type:menu_type,file:files},
+                data : formData,
+                 dataType : 'Json',
+                  processData: false,
+                  contentType: false,
+                   success : function(res){ console.log(res);
+                    if(res.token){
+                          $('input[name="<?php echo $this->security->get_csrf_token_name(); ?>"]').val(res.token);
+                      }
+                     if(res.status ==true){
+                       swal({
+                          title: '<?php echo $complete_sm; ?>',
+                          text: '<?php echo $complete_lg; ?>',
+                          // icon: 'success',
+                          imageUrl: '<?php echo $AUTH_ASSETS; ?>'+'img/order_confirms.png',
+                            imageWidth: 70,
+                            imageHeight: 70,
+                            allowOutsideClick: false,
+                            imageAlt: 'Custom image',
+                        }).then((result) => {
+                            location.reload();
+                        });
+                     }else if(res.status == 'not_authorize'){
+                          swal({
+                                title: 'You are not authorized for this action',
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                location.reload();
+                            });
+                      }else if(res.status == false){
+                          swal({
+                                title: res.message,
+                                allowOutsideClick: false,
+                            }).then((result) => {
+                                location.reload();
+                            });
+                      }else{
+                      swal("Somthing wrong", " ", "error");
+                     }
+                   }
+                 })
+          } else {
+           // swal({ title: 'Cancelled',
+           //      allowOutsideClick: false,
+           //  });
+          }
+        });
+   }
+ });
+
+</script>
+
+
+
+ 

@@ -1,0 +1,193 @@
+<div class="">
+    <div class="bg-white">
+       <div class="container-fluid">
+          <div class="row">
+             <div class="col-md-12">
+                <ul class="nav nav-tabs mobile_app_nav" id="myTab" role="tablist">
+                   <li class="nav-item" role="presentation">
+                      <a class="nav-link active" id="master-banner-list-tab" data-bs-toggle="tab"
+                         data-bs-target="#master-banner-list" type="button" role="tab" aria-controls="master-banner-list"
+                         aria-selected="true">Banner List</a>
+                   </li>
+                   
+                   <li class="nav-item" role="presentation">
+                      <a class="nav-link " id="mobile-menu-banner-tab" data-bs-toggle="tab"
+                         data-bs-target="#mobile-menu-banner" type="button" role="tab" aria-controls="mobile-menu-banner"
+                         aria-selected="true">Add Banner</a>
+                   </li>
+                  
+                   
+ 
+                </ul>
+             </div>
+          </div>
+       </div>
+    </div>
+    <div class="container-fluid">
+       <div class="row">
+          <div class="col-md-12">
+             <div class="tab-content mabile_app_content mobile_banner_content my-3" id="myTabContent">
+               
+ 
+                <div class="tab-pane fade show active" id="master-banner-list" role="tabpanel"
+                   aria-labelledby="master-banner-list-tab">
+                   <!-- <div class="row">
+                      <div class="col-lg-12">
+                         <h4>Banner List</h4>
+                      </div>
+                   </div> -->
+                   <div class="py-3 table-responsive">
+                      <table class="table bg-white master_banner_table table-striped mb-0" id="all-banner-grid" style="width:99%;">
+                         <thead>
+                            <tr>
+                               <th>Banner Name</th>
+                               <th>Banner Type</th>
+                               <th>Banner Image</th>
+                               <th>Action By</th>
+                               <th>Action On</th>
+                               <th class="noExport">Status</th>
+                               <th class="noExport">Action</th>
+                            </tr>
+                        
+                            <tr>
+                               <!--  <th></th> -->
+                                <th><input type="text" data-column="1"  class="search-input-text form-control"></th>
+                                <th><select data-column="2"  class="search-input-text form-control">
+                                   <option value="">All</option>
+                                   <option value="0">Top Banner</option>
+                                   <option value="1">Footer Banner</option>
+                                </select></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th class="noExport"></th>
+                                <th class="noExport"></th>
+                            </tr>
+                        </thead>
+ 
+                      </table>
+                   </div>
+                </div>
+ 
+                 <div class="tab-pane fade " id="mobile-menu-banner" role="tabpanel"
+                   aria-labelledby="mobile-menu-banner-tab">
+                   <div class="row">
+                      <!-- <div class="col-lg-12">
+                         <h4>Banner List</h4>
+                      </div> -->
+                   </div>
+                   <form class="mobile_menu_form mobile_dash_dt" id="banner_content_form" autocomplete="off">
+                      <div class="row">
+                         <div class="col-md-6 mb-3">
+                            <label for="bannername" class="label_mb_dt mb-1">Banner Name<span
+                                  class="m_star">*</span><span class="max_mobile_content">(Maximum 20 Characters
+                                  allowed)</span></label>
+                            <input type="text" class="form-control" name="Bannername" id="Bannername" placeholder="Enter Banner Name" maxlength="20" onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')">
+                            <span class="text-danger " id="error_Bannername" ></span>
+                         </div>
+                         <div class="col-md-6 mb-3">
+ 
+                            <label for="screenshot_img" class="label_mb_dt mb-1">Banner Type<span
+                                  class="m_star">*</span><span class="max_mobile_content">(Single Selection
+                                  allowed)</span></label>
+ 
+                            <select id="BannerType" name='BannerType' class="visible_mobile_entity btp">
+                               <option value="" selected disabled>Select Banner Type</option>
+                               <option value="0">Top Banner</option>
+                               <option value="1">Footer Banner</option>
+                            </select>
+                            <span class="text-danger " id="error_BannerType" ></span>
+ 
+                         </div>
+                         <div class="col-md-6 mb-3">
+                            <label for="banner_mobile_image" class="label_mb_dt mb-1">Banner Image<span
+                                  class="m_star">*</span><span class="max_mobile_content">(Preferred size 1950*500 in
+                                  png file)</span></label>
+                            <input type="file" class="form-control" name="BannerImage" id="BannerImage"
+                               placeholder="No Image" onchange="validateimage()" accept="image/png" >
+                            <span class="text-danger " id="error_BannerImage" ></span>
+                         </div>
+ 
+ 
+                         <div class="col-md-12 =">
+                            <button class="dash_btn submit_btns confirm_save_btn" >Submit</button>
+                         </div>
+                      </div>
+                   </form>
+ 
+                </div>
+             </div>
+          </div>
+ 
+       </div>
+    </div>
+ </div>
+ 
+ <div class="modal fade" id="modified_area_popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+     <div class="modal-dialog modal-lg scrolldialog" role="document" >
+         <div class="modal-content">
+             <div class="modal-body body_data_chk">
+ 
+             </div>
+         </div>
+     </div>
+ </div>
+ <script>
+ jQuery(document).ready(function() {
+           var table = 'all-banner-grid';
+           var dataTable = jQuery("#"+table).DataTable( {
+              "dom": '<l>Bfrtip',
+              "processing": false,
+              "pageLength": 10,
+              "lengthMenu": [
+                  [10, 20, 50, 100, 500],
+                  [10, 20, 50, 100, 500]
+              ],
+              "serverSide": true,
+              "ordering": false,
+              "buttons": [
+                  {
+                      extend: 'csvHtml5',
+                      exportOptions: {
+                          columns: [0, 2, 3, 4],
+                           rows: ":not('.dnr')"
+                      }
+                  }
+              ],
+              "columnDefs": [{
+                  "targets": [0, 2, 3, 4],
+                  "orderable": false
+              }],
+              "order": [
+                  [1, "asc"]
+              ],
+               "ajax":{
+                   url :"Banner/get_all_banners_ajax/", // json datasource
+                   type: "post",  // method  , by default get
+                   error: function(){  // error handling
+                       jQuery("."+table+"-error").html("");
+                       jQuery("#"+table+"_processing").css("display","none");
+                   }
+              },
+                "language": {
+                    "paginate": {
+                        "next": "Next",
+                        "previous": "Previous"
+                    }
+                }
+            });
+           jQuery("#"+table+"_filter").css("display","none");
+           $('.search-input-text').on( 'keyup click', function () {   // for text boxes
+               var i =$(this).attr('data-column');  // getting column index
+               var v =$(this).val();  // getting search input value
+               dataTable.columns(i).search(v).draw();
+           } );
+            $('.search-input-select').on( 'change', function () {   // for select box
+                var i =$(this).attr('data-column');
+                var v =$(this).val();
+                dataTable.columns(i).search(v).draw();
+            } );
+     } );
+               
+
+ </script>

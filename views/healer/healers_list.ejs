@@ -1,0 +1,310 @@
+
+<style>
+    input::placeholder{
+        font-size: 10px;
+    }
+    thead tr {
+            display: table-row;
+        }
+       /*  .dataTables_wrapper .dataTables_paginate .paginate_button {
+            display: none;
+        }*/
+    
+        .dataTables_wrapper .dataTables_paginate .paginate_button.previous,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.next {
+            display: inline-block;
+        }
+        table.dataTable>thead:nth-child(2) >tr>th {
+       white-space: nowrap;
+    }
+    
+    .vis_multi .select2-selection--multiple{
+      height:inherit !important;
+    }
+      .switch {
+      position: relative;
+      display: inline-block;
+      width: 55px;
+      height: 24px;
+    }
+    
+    .switch input { 
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 3px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+    
+    input:checked + .slider {
+      background-color: #e87537;
+    }
+    
+    input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+    
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+    .slider.round {
+      border-radius: 34px;
+    }
+    
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    .card-body{padding: 8px 6px 3px 10px !important;}
+</style>
+    <div class="">
+        <div class="bg-white">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="nav nav-tabs mobile_app_nav" id="myTab" role="tablist">
+                            <li class="nav-item " role="presentation">
+                                <a class="nav-link active" id="mobile-menu-list-tab" data-bs-toggle="tab" data-bs-target="#mobile-menu-list" type="button" role="tab" href="#mobile-menu-list" aria-controls="mobile-menu-list" aria-selected="true">Healers
+                                    List</a>
+                            </li>
+                            <li class="nav-item " role="presentation">
+                                <a class="nav-link" id="healer-position-list-tab" data-bs-toggle="tab" data-bs-target="#healer-position-list" type="button" role="tab" href="#healer-position-list" aria-controls="healer-position-list" aria-selected="true">Healers
+                                    Position</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tab-content mabile_app_content mobile_banner_content my-3 " id="myTabContent">
+                        
+                        <div class="tab-pane fade show active" id="mobile-menu-list" role="tabpanel" aria-labelledby="mobile-menu-list-tab">
+                            
+                            <div class="col-sm-12">
+                                <section class="panel">
+                                
+                                    <div class="panel-body">
+                                        <div class="adv-table table-responsive">
+                                            <table class="table table-bordered table-striped bg-white mt-2" id="all-user-grid" style="width:99% !important; ">
+                                                <thead>
+                                                    <tr>
+                                                        <!--  <th>S.No.</th> -->
+                                                        <th>Healer Name </th>
+                                                        <th>Profile Link</th>
+                                                        <th>Healer Image</th>
+                                                        <th>Mobile</th>
+                                                        <th>Email</th>
+                                                        <th>Gender</th>
+                                                        <th>IsLive</th>
+                                                        <th>IsPro</th>
+                                                        <th>CreatedDateTime</th>
+                                                        <th>Status </th>
+                                                        <th>Action </th>
+                                                    </tr>
+                                           
+                                                    <tr class="dnr" >
+                                                        <th><input type="text" data-column="1" class="search-input-text form-control"></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th><input type="text" data-column="2" class="search-input-text form-control"></th>
+                                                        <th><input type="text" data-column="3" class="search-input-text form-control"></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+    
+                        </div>
+    
+                        <div class="tab-pane fade show" id="healer-position-list" role="tabpanel" aria-labelledby="healer-position-list-tab">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="healer-position-order-data"> </div>
+    
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+    </div>
+    
+    
+    
+    
+    <div class="modal fade" id="modified_area_popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg scrolldialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body body_data_chk">
+    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    jQuery(document).ready(function() {
+    var table = 'all-user-grid';
+    var dataTable = jQuery("#" + table).DataTable({
+        "dom": '<l>Bfrtip',
+        "processing": true, // Show processing indicator
+        "pageLength": 10,
+        "paging": true,
+        "lengthMenu": [
+            [10, 20, 50, 100, 500],
+            [10, 20, 50, 100, 500]
+        ],
+        "serverSide": true,
+        "ordering": false,
+        "order": [
+            [1, "asc"] // Default order by second column
+        ],
+        "ajax": {
+            url: "Healer/get_healers_data_list/", // JSON datasource
+            type: "POST", // Use POST method
+            error: function(xhr, error, thrown) { // Improved error handling
+                console.error("Error loading data: ", error);
+                jQuery("." + table + "-error").html("Error loading data.");
+                jQuery("#" + table + "_processing").css("display", "none");
+            },
+        },
+        "language": {
+            "paginate": {
+                "next": "Next",
+                "previous": "Previous"
+            },
+            "emptyTable": "No data available in table", // Custom message for empty table
+            "zeroRecords": "No matching records found" // Custom message for no matching records
+        }
+    });
+
+    // Hide the default filter input
+    jQuery("#" + table + "_filter").css("display", "none");
+
+    // For text input search
+    $('.search-input-text').on('keyup click', function() {
+        var i = $(this).data('column'); // getting column index using jQuery's .data() method
+        var v = $(this).val(); // getting search input value
+        dataTable.columns(i).search(v).draw(); // Search and redraw the table
+    });
+
+    // For select box search
+    $('.search-input-select').on('change', function() {
+        var i = $(this).data('column'); // getting column index using jQuery's .data() method
+        var v = $(this).val(); // getting selected value
+        dataTable.columns(i).search(v).draw(); // Search and redraw the table
+    });
+});
+
+$(document).on('click', '#healer-position-list-tab', function(e) {
+        e.preventDefault();
+        ajax_position_list();
+    })
+    function ajax_position_list(){
+        $.ajax({
+            url: "healer/ajax_position_list",
+            type: "post",
+            data: {
+               "menuFor": 1
+            },
+            success: function(resp) {
+                $('.healer-position-order-data').html(resp);
+                position_load();
+            }
+        })
+    }
+ $(document).on('change', '.toggle-input, .toggle-input-pro', function(e) {
+        var checked = $(this).is(':checked') ? 1 : 0;
+        var id = $(this).attr('chkid');
+        var url = $(this).hasClass('toggle-input-pro') ? '$isProUpdate' : '$isliveupdate';
+        toggle_config(checked, id, url);
+    });
+
+    function toggle_config(checked, id, url) {
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                checked: checked,
+                id: id
+            },
+            dataType: 'Json',
+            success: function(result) {
+                show_toast('success', result.message, '');
+            }
+        });
+    }
+
+      function position_load() {
+            $(".row_position").sortable({
+                delay: 150,
+                axis: 'y',
+                stop: function() {
+                    var selectedData = new Array();
+                    $('.row_position>div').each(function() {
+                        selectedData.push($(this).attr("id"));
+                    });
+                    updateMenuOrder(selectedData);
+                }
+            });
+        }
+        function updateMenuOrder(data) {
+
+            $.ajax({
+                url: "healer/update_position_list",
+                type: 'post',
+                data: {
+                    position: data
+                },
+                success: function(data) {
+
+                    show_toast('success', 'position', '');
+                    ajax_position_list();
+                },
+                error: function(data) {
+                    show_toast('danger', 'Somthing went wrong', '');
+                }
+            })
+        }
+
+</script>
+    

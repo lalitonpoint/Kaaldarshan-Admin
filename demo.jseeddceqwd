@@ -1,0 +1,25 @@
+var http = require('mysql');
+var socket = require('http');
+var data ='';
+var con =http.createConnection({
+    host:"localhost",
+    user:"root",
+    password:"",
+    database:"test_user"
+})
+con.connect(function(error){
+if(error) throw error;
+console.log('connected');
+con.query("select * from users where id =1",function(err,result){
+if(err) throw err;
+data =result;
+})
+})
+module.exports = con;
+var connect =socket.createServer(function(req,res){
+  
+req.writeHead(200, {'Content-Type' : 'application\json'});
+res.write(JSON.stringify(data));
+res.end;  
+    
+}).listen(3540);

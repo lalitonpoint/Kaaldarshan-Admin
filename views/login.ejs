@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body{
+            background-color: rgb(22, 25, 54);
+            overflow: hidden;
+            font-family: cursive;
+        }
+
+        .loginBanner {
+            animation: spin 9s infinite linear;
+            -webkit-animation: spin 9s infinite linear;
+            border-radius: 0; /* Make sure it's not rounded */
+            height: 90%;
+        }
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+         
+        .loginBtn{
+            background: crimson;
+            padding: 7px 30px;
+            text-align: center;
+            border-radius: 10px;
+            border-color: crimson;
+        }
+
+        .loginBtn:hover{
+            border-color: crimson;
+            background-color: #fff;
+            color: crimson;
+        }
+    </style>
+</head>
+<body>
+    <div class="row m-0">
+        <div class="col-md-4 m-auto text-white">
+            <h2 class="mt-5">Login</h2>
+            <form id="loginForm" method="POST">
+                <div class="form-group">
+                    <label for="email">Email address:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary loginBtn">Login</button>
+            </form>
+            <div id="message" class="mt-3"></div>
+        </div>
+    
+        <div class="col-md-6 m-auto p-3">
+            <img class="img-fluid loginBanner" src="/assets/img/loginBanner.png" alt="">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            const data = await response.json();
+            const messageDiv = document.getElementById("message");
+            console.log(response.ok);
+            if (response.ok==true) {
+                messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                 setTimeout(() => {
+                    window.location.href = '/home';  // Update the URL as needed
+                 }, 1000);  
+            } else {
+                messageDiv.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+            }
+        });
+    </script>
+</body>
+</html>
