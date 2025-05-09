@@ -6,7 +6,7 @@ const authenticateJWT = (req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1]; // Extract token from Authorization header
 
   if (!token) {
-    return res.status(403).json({ message: 'Access denied. No token provided.' });
+    return res.status(403).json({  status: false,message: 'Access denied. No token provided.' });
   }
 
   // Verify the token

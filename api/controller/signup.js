@@ -67,5 +67,66 @@ const signup = async (req, res) => {
 };
 
 
+const login = async (req, res) => {
+  try {
+    const { mobile, password } = req.body;
 
-module.exports = { signup };
+    // 1. Check if both fields are provided
+    if (!mobile || !password) {
+      return res.status(400).json({
+        status: false,
+        message: 'Mobile and password are required',
+      });
+    }
+
+    // 2. Check if user exists
+    const user = await User.findOne({ where: { mobile } });
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: 'Mobile number not found',
+      });
+    }
+
+    // 3. Match password (plain-text check, or use bcrypt if hashed)
+    if (user.password !== password) {
+      return res.status(401).json({
+        status: false,
+        message: 'Incorrect password',
+      });
+    }
+
+    // 4. Create JWT token
+    const token = jwt.sign(
+      { userId: user.id, mobile: user.mobile },
+      process.env.SECRET_KEY,
+      { expiresIn: '1h' }
+    );
+
+    // 5. Return success response
+    return res.status(200).json({
+      status: true,
+      message: 'Login successful',
+      Jwt: token,
+      user: user, // optionally omit password in real apps
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({
+      status: false,
+      message: 'Something went wrong during login',
+    });
+  }
+};
+
+
+
+
+
+module.exports =
+ { 
+  signup,
+  login
+
+ };
