@@ -4,12 +4,12 @@ const router = express.Router();
 
 const userController = require('../controllers/userController'); // Correct controller
 
-// Route to test
-// router.get('/', (req, res) => {
-//     res.render('category/add_category');
-// });
 
 // routes/userRoutes.js
-router.get('/userList', userController.userList); // NOT post
+router.post('/get_all_user_ajax', userController.get_all_user_ajax);
+router.get('/edit_user/:id', userController.edit_user);
+router.get('/status_change/:id/:Status', userController.status_change);
+router.post('/updateUser/:id', userController.updateUser);
+
 
 module.exports = router;

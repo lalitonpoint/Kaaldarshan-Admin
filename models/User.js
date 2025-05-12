@@ -8,6 +8,7 @@ const User = sequelize.define('User', {
         autoIncrement: true,
         primaryKey: true,
     },
+    
     email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -17,6 +18,9 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    Status :{
+        type: DataTypes.INTEGER,
+    }
 }, {
     tableName: 'backend_users', // Specify the table name
     timestamps: false, // Disable automatic timestamps if your table does not have createdAt/updatedAt

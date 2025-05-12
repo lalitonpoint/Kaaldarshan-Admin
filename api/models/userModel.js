@@ -12,18 +12,26 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    email: {
+  
+    mobile: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    mobile: {
+    email: {
         type: DataTypes.STRING,
         allowNull: false,
     },
     password: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    Status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: '1'
     }
+    
+    
     // created_at: {
     //     type: DataTypes.DATE,
     //     allowNull: false,

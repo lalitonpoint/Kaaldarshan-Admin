@@ -40,8 +40,8 @@ const signup = async (req, res) => {
 
     const newUser = await User.create({
       name : String(name),
-      email : String(email),
       mobile: String(mobile),
+      email : String(email),
       password: String(password),
       
     });

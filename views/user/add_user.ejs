@@ -72,9 +72,10 @@
                                                      <th style="max-width:40px;">S.No.</th>
                                                     <th>User Name </th>
                                                     <th>User Mobile</th>
+                                                    
                                                     <!-- <th>Category Banner</th> -->
-                                                    <th>Action By</th>
-                                                    <th>Action On</th>
+                                                    <!-- <th>Action By</th> -->
+                                                    <!-- <th>Action On</th> -->
                                                     <th>Status </th>
                                                     <th>Action </th>
                                                 </tr>
@@ -85,8 +86,8 @@
                                                     <th></th>
                                                     <th></th>
                                                     <th></th>
-                                                    <th></th>
-                                                    <th></th>
+                                                    <!-- <th></th>
+                                                    <th></th> -->
                                                 </tr>
                                             </thead>
                                         </table>
@@ -124,36 +125,38 @@
     <div class="modal-dialog modal-lg scrolldialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Category</h5>
+                <h5 class="modal-title">Edit User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body body_data_chk">
                 <form id="editCategoryForm" enctype="multipart/form-data">
-                    <input type="hidden" name="CategoryId" id="editCategoryId">
+                    <input type="hidden" name="id" id="edituserId">
 
                     <div class="mb-3">
-                        <label for="editCategoryName" class="form-label">Category Name</label>
-                        <input type="text" class="form-control" name="CategoryName" id="editCategoryName" required>
+                        <label for="editCategoryName" class="form-label">User Name</label>
+                        <input type="text" class="form-control" name="userName" id="edituserName" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Current Thumbnail</label><br>
-                        <img id="thumbnailPreview" src="" alt="Thumbnail" width="100" height="60" style="border:1px solid #ccc;">
+                        <label class="form-label">User Mobile</label><br>
+                        <input type="text" class="form-control" name="userMobile" id="editusermobile" required>
+
+                        <!-- <img id="thumbnailPreview" src="" alt="Thumbnail" width="100" height="60" style="border:1px solid #ccc;"> -->
                     </div>
 
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="editCategoryThumb" class="form-label">Upload New Thumbnail</label>
                         <input type="file" class="form-control" name="CategoryThumb" id="editCategoryThumb" accept="image/*" required>
-                    </div>
-                    <div class="form-group">
+                    </div> -->
+                     <div class="form-group">
                         <label for="statusDropdown">Status</label>
                         <select id="statusDropdown2" class="form-control">
                             <option value="1">Active</option>
                             <option value="2">Inactive</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button> 
                 </form>
             </div>
         </div>
@@ -195,7 +198,7 @@
             [1, "asc"] // Default order by second column
         ],
         "ajax": {
-            url: "Category/get_all_category_ajax/", // JSON datasource
+            url: "user/get_all_user_ajax/", // JSON datasource
             type: "POST", // Use POST method
             data: function (d) {
                 // Add additional parameters if needed
@@ -618,9 +621,9 @@ $(document).on('click', '.view_data_chk', function(e) {
 
         },
         success: function(res) { 
-            $('#editCategoryName').val(res.CategoryName);  // Set Category Name
-            $('#thumbnailPreview').attr('src', res.CategoryThumb); 
-            $('#editCategoryId').val(res.CategoryId);
+            $('#edituserName').val(res.name);  // Set Category Name
+            $('#editusermobile').val(res.mobile); 
+            $('#edituserId').val(res.id);
             $('#statusDropdown2').val(res.Status); 
             $("#modified_area_popup").modal({
                 show: false,
@@ -702,23 +705,23 @@ $(document).on('click', '#mobile-order-mgmt-tab', function(e) {
 
     const form = document.getElementById('editCategoryForm');
     const formData = new FormData(form); // Automatically collects all form inputs including fil
-    var id = $('#editCategoryId').val();
+    var id = $('#edituserId').val();
     // const Status = $('#statusDropdown').val();  // Get selected value of status
      formData.append('Status', Status);
     $.ajax({
-        url: '/category/updateCategory'+ '/'+id, // Your controller endpoint
+        url: '/user/updateUser'+ '/'+id, // Your controller endpoint
         type: 'post',
         data: formData,
         contentType: false,
         processData: false,
         success: function (response) {
-            alert('Category updated successfully!');
+            alert('User updated successfully!');
             $('#modified_area_popup').modal('hide');
             // Optionally refresh table or update UI
         },
         error: function (xhr, status, error) {
             console.error('Error:', error);
-            alert('Something went wrong while updating the category.');
+            alert('Something went wrong while updating the user.');
         }
     });
 });
