@@ -170,7 +170,7 @@ app.get('/healer', (req, res) => {
     });
 });
 
-app.get('/Subscription', (req, res) => {
+app.get('/subscription', (req, res) => {
     //console.log(req.session.user);
     if (!req.session.user) {
         return res.status(401).json({ message: "You need to log in first." });
@@ -179,7 +179,7 @@ app.get('/Subscription', (req, res) => {
     //console.log(body); // This will log to the server console
 
     res.render('template', {
-        title: 'Subscription Page',
+        title: 'subscription Page',
         body: body,
         user: req.session.user
     });
