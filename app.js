@@ -12,7 +12,7 @@ const categoryRoutes = require('./routes/categoryRoutes'); // Import the route
 const userRoutes = require('./routes/userRoutes'); // Import the route
 const healerRoutes = require('./routes/healerRoutes'); // Import the route
 const bannerRoutes = require('./routes/bannerRoutes'); // Import the route
-const subscriptionRoutes = require('./routes/userRoutes')
+const subscriptionRoutes = require('./routes/subscriptionRoutes')
 const apiRoutes = require('./api/routes/indexRoutes'); // Import the route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 require('dotenv').config();

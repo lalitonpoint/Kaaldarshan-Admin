@@ -2,7 +2,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../connection'); // Adjust the path to your sequelize connection
 
-const User = sequelize.define('User', {
+const plan_management = sequelize.define('plan_management', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -34,4 +34,4 @@ const User = sequelize.define('User', {
     timestamps: false, // Disable automatic timestamps if your table does not have createdAt/updatedAt
 });
 
-module.exports = User;
+module.exports = plan_management;

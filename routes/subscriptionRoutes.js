@@ -4,6 +4,7 @@ const router = express.Router();
 const multer = require('multer');
 const upload = multer(); // For non-file form data
 const subscriptionController = require('../controllers/subscriptionController'); // Correct controller
+const userController = require('../controllers/userController'); // Correct controller
 // Middleware for parsing application/json
 router.use(express.json());
 

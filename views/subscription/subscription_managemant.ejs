@@ -32,23 +32,23 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="fname" class="label_mb_dt mb-1">Plan Name<span class="m_star">*</span></label>
-                                    <input type="text" class="form-control" name='UserName' id="UserName" placeholder="Enter Plan Name" maxlength="50" > <!-- onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')" -->
+                                    <input type="text" class="form-control" name='plan_name' id="UserName" placeholder="Enter Plan Name" maxlength="50" > <!-- onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')" -->
                                     <span class="text-danger" id="span_CategoryName"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="image_dt" class="label_mb_dt mb-1">Plan Amount<span class="m_star">*</span></label>
-                                    <input type="text" class="form-control" name='UserMobile' id="UserMobile" placeholder="Enter Plan Amount" maxlength="50" > <!-- onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')" -->
+                                    <input type="text" class="form-control" name='plan_amount' id="UserMobile" placeholder="Enter Plan Amount" maxlength="50" > <!-- onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')" -->
                                     <span class="text-danger" id="span_UserMobile"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="fname" class="label_mb_dt mb-1">Plan Validity<span class="m_star">*</span></label>
-                                    <input type="text" class="form-control" name='Userpassword' id="Userpassword" placeholder="Enter Validity" maxlength="50" > <!-- onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')" -->
+                                    <input type="text" class="form-control" name='plan_validity' id="Userpassword" placeholder="Enter Validity" maxlength="50" > <!-- onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')" -->
                                     <span class="text-danger" id="span_CategoryName"></span>
                                 </div>
 
                                 <div class="col-md-12 mb-3">
                                     <label for="planDescription" class="label_mb_dt mb-1">Plan Description</label>
-                                    <textarea name="PlanDescription" id="PlanDescription" rows="5" class="form-control"></textarea>
+                                    <textarea name="plan_feature" id="PlanDescription" rows="5" class="form-control"></textarea>
                                     <span class="text-danger" id="error_PlanDescription"></span>
                                   </div>
 
@@ -251,11 +251,16 @@
 
 </script>
 <script>
-  ClassicEditor
-    .create(document.querySelector('#PlanDescription')) // ID must match
-    .catch(error => {
-      console.error(error);
-    });
+ let editorInstance;
+ClassicEditor
+  .create(document.querySelector('#PlanDescription'))
+  .then(editor => {
+    editorInstance = editor;
+    window.editorInstance = editor; // Optional: assign to window
+  })
+  .catch(error => {
+    console.error(error);
+  });
 </script>
 <script >
 
@@ -353,6 +358,16 @@ function validatepdf(){
             return;
         }
 
+        let editorInstance;
+        ClassicEditor
+        .create(document.querySelector('#PlanDescription'))
+        .then(editor => {
+            editorInstance = editor;
+            window.editorInstance = editor; // Optional: assign to window
+        })
+        .catch(error => {
+            console.error(error);
+        });
         // Create FormData object
         var form = $('#mobile_menu_content_form')[0];
         var formData = new FormData(form); // Ensure form is properly referenced

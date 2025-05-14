@@ -29,32 +29,28 @@ app.use((req, res, next) => {
         try {
 
             console.log('Request Body:', req.body);
-            const { UserName, UserMobile, Userpassword, Status } = req.body;
+            const { plan_name, plan_amount, plan_validity,plan_feature, Status } = req.body;
     
             // Validate required fields
-            if (!UserName || !UserMobile || Status === undefined) {
+            if (!plan_validity || !plan_name || Status === undefined) {
                 return res.status(400).json({ message: 'Name, mobile, and status are required.' });
             }
     
             // Create user
             const newUser = await Plan.create({
-                name : UserName,
-                mobile : UserMobile,
-                password : Userpassword,
+                plan_name : plan_name,
+                plan_amount : plan_amount,
+                plan_validity : plan_validity,
+                plan_feature : plan_feature,
                 Status
             });
     
-            return res.status(201).json({ message: 'User added successfully.', data: newUser });
+            return res.status(201).json({ message: 'Plan added successfully.', data: newUser });
         } catch (error) {
             console.error('Error adding user:', error);
             return res.status(500).json({ message: 'Internal server error', error: error.message });
         }
     }
-
-
-
-
-
 
 
 
