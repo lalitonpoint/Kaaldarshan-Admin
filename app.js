@@ -50,7 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/category', categoryRoutes);  // URL will be /category/add_category_ajax
 app.use('/user',userRoutes);
-app.use('/Subscription',subscriptionRoutes);
+app.use('/subscription',subscriptionRoutes);
 app.use('/healer', healerRoutes);  // URL will be /category/add_category_ajax
 app.use('/banner', bannerRoutes);  // URL will be /category/add_category_ajax
 
@@ -165,6 +165,21 @@ app.get('/healer', (req, res) => {
 
     res.render('template', {
         title: 'Category Page',
+        body: body,
+        user: req.session.user
+    });
+});
+
+app.get('/Subscription', (req, res) => {
+    //console.log(req.session.user);
+    if (!req.session.user) {
+        return res.status(401).json({ message: "You need to log in first." });
+    }
+    const body = 'subscription/subscription_managemant';
+    //console.log(body); // This will log to the server console
+
+    res.render('template', {
+        title: 'Subscription Page',
         body: body,
         user: req.session.user
     });
