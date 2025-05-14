@@ -31,14 +31,19 @@
                            <!--  <input type="hidden" id="token" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?php echo $token; ?>" /> -->
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="fname" class="label_mb_dt mb-1">Category Name<span class="m_star">*</span><span class="max_mobile_content">(Maximum 50 Characters allowed)</span></label>
-                                    <input type="text" class="form-control" name='CategoryName' id="CategoryName" placeholder="Enter Category Name" maxlength="50" > <!-- onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')" -->
+                                    <label for="fname" class="label_mb_dt mb-1">User Name<span class="m_star">*</span><span class="max_mobile_content">(Maximum 50 Characters allowed)</span></label>
+                                    <input type="text" class="form-control" name='UserName' id="UserName" placeholder="Enter User Name" maxlength="50" > <!-- onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')" -->
                                     <span class="text-danger" id="span_CategoryName"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="image_dt" class="label_mb_dt mb-1">Category Thumbnail<span class="m_star">*</span><span class="max_mobile_content">(Please select an image less than 1 MB in PNG or JPEG format)</span></label>
-                                    <input type="file" class="form-control file-size" placeholder="No Image" name='CategoryThumb' id="CategoryThumb" onchange="thumbimage()" accept="image/png,image/jpg,image/jpeg">
-                                    <span class="text-danger " id="error_CategoryThumb"></span>
+                                    <label for="image_dt" class="label_mb_dt mb-1">User Mobile<span class="m_star">*</span></label>
+                                    <input type="text" class="form-control" name='UserMobile' id="UserMobile" placeholder="Enter User Mobile" maxlength="50" > <!-- onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')" -->
+                                    <span class="text-danger" id="span_UserMobile"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="fname" class="label_mb_dt mb-1">User Password<span class="m_star">*</span><span class="max_mobile_content">(Maximum 50 Characters allowed)</span></label>
+                                    <input type="text" class="form-control" name='Userpassword' id="Userpassword" placeholder="Enter User Password" maxlength="50" > <!-- onkeyup="this.value=this.value.replace(/[^a-zA-Z0-9-_/()!{}. ]/g,'')" -->
+                                    <span class="text-danger" id="span_CategoryName"></span>
                                 </div>
 
                                 <div class="form-group">
@@ -247,13 +252,13 @@
 
 
 $(document).ready(function() {
-    $('#CategoryName').keyup(function() {
+    $('#UserName').keyup(function() {
         $('.submit_btns').attr('disabled', false);
         $('#span_CategoryName').html('');
 
-        var name = $('#CategoryName').val();
+        var name = $('#UserName').val();
         var sname = name.replace(/\s+/g, ' ');
-        $('#CategoryName').val(sname);
+        $('#UserName').val(sname);
 
         if (/[^a-zA-Z0-9-_, ]/.test(sname)) {
             $('#span_CategoryName').html('Special characters are not allowed.');
@@ -320,17 +325,18 @@ function validatepdf(){
         e.preventDefault(); // Prevent default form submission
         $('.text-danger').html(''); // Clear any previous error messages
 
-        var CategoryName = $('#CategoryName').val();
+        var UserName = $('#UserName').val();
+        var UserMobile = $('#UserMobile').val();
         var return_false = 0;
 
         // Input validation
-        if (CategoryName.trim() === '') {
-            $('#span_CategoryName').html('Please enter CategoryName');
-            $('#CategoryName').focus();
+        if (UserName.trim() === '') {
+            $('#span_CategoryName').html('Please enter UserName');
+            $('#UserName').focus();
             return_false = 1;
-        } else if (document.getElementById("CategoryThumb").files.length === 0) {
-            $('#error_CategoryThumb').html('Please select Thumbnail Image');
-            $('#CategoryThumb').focus(); // Focus on the thumbnail input
+        } else if (UserMobile.trim() === '') {
+            $('#span_UserMobile').html('Please enter UserName');
+            $('#UserMobile').focus(); // Focus on the thumbnail input
             return_false = 1;
         } 
 
@@ -347,7 +353,7 @@ function validatepdf(){
         formData.append('Status', Status);
 
         $.ajax({
-            url: "/Category/add_category_ajax/",
+            url: "/user/add_user_ajax/",
             type: 'POST',
             data: formData,
             dataType: 'json',

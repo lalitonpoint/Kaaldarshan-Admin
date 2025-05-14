@@ -12,6 +12,7 @@ const categoryRoutes = require('./routes/categoryRoutes'); // Import the route
 const userRoutes = require('./routes/userRoutes'); // Import the route
 const healerRoutes = require('./routes/healerRoutes'); // Import the route
 const bannerRoutes = require('./routes/bannerRoutes'); // Import the route
+const subscriptionRoutes = require('./routes/userRoutes')
 const apiRoutes = require('./api/routes/indexRoutes'); // Import the route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 require('dotenv').config();
@@ -49,6 +50,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/category', categoryRoutes);  // URL will be /category/add_category_ajax
 app.use('/user',userRoutes);
+app.use('/Subscription',subscriptionRoutes);
 app.use('/healer', healerRoutes);  // URL will be /category/add_category_ajax
 app.use('/banner', bannerRoutes);  // URL will be /category/add_category_ajax
 

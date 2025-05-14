@@ -25,6 +25,35 @@ app.use((req, res, next) => {
 });
 
 
+    async function add_user_ajax(req, res) {
+        try {
+
+            console.log('Request Body:', req.body);
+            const { UserName, UserMobile, Userpassword, Status } = req.body;
+    
+            // Validate required fields
+            if (!UserName || !UserMobile || Status === undefined) {
+                return res.status(400).json({ message: 'Name, mobile, and status are required.' });
+            }
+    
+            // Create user
+            const newUser = await User.create({
+                name : UserName,
+                mobile : UserMobile,
+                password : Userpassword,
+                Status
+            });
+    
+            return res.status(201).json({ message: 'User added successfully.', data: newUser });
+        } catch (error) {
+            console.error('Error adding user:', error);
+            return res.status(500).json({ message: 'Internal server error', error: error.message });
+        }
+    }
+
+
+
+
 
 
 
@@ -230,6 +259,7 @@ module.exports = {
     get_all_user_ajax,
     edit_user,
     status_change,
-    updateUser
+    updateUser,
+    add_user_ajax
    
 };
