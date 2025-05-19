@@ -250,18 +250,7 @@
 });
 
 </script>
-<script>
- let editorInstance;
-ClassicEditor
-  .create(document.querySelector('#PlanDescription'))
-  .then(editor => {
-    editorInstance = editor;
-    window.editorInstance = editor; // Optional: assign to window
-  })
-  .catch(error => {
-    console.error(error);
-  });
-</script>
+
 <script >
 
 $(document).ready(function() {
@@ -333,73 +322,156 @@ function validatepdf(){
             $("#"+this.event.target.id).val('');
         }    
     }
-    $(document).ready(function() {
-    $('.submit_btns').on('click', function(e) {
-        e.preventDefault(); // Prevent default form submission
-        $('.text-danger').html(''); // Clear any previous error messages
+
+//     $(document).ready(function() {
+//     $('.submit_btns').on('click', function(e) {
+//         e.preventDefault(); // Prevent default form submission
+//         $('.text-danger').html(''); // Clear any previous error messages
+
+//         var UserName = $('#UserName').val();
+//         var UserMobile = $('#UserMobile').val();
+//         var return_false = 0;
+
+//         // Input validation
+//         if (UserName.trim() === '') {
+//             $('#span_CategoryName').html('Please enter UserName');
+//             $('#UserName').focus();
+//             return_false = 1;
+//         } else if (UserMobile.trim() === '') {
+//             $('#span_UserMobile').html('Please enter UserName');
+//             $('#UserMobile').focus(); // Focus on the thumbnail input
+//             return_false = 1;
+//         } 
+
+//         // Prevent form submission if validation fails
+//         if (return_false === 1) {
+//             return;
+//         }
+
+//         let editorInstance;
+//         ClassicEditor
+//         .create(document.querySelector('#PlanDescription'))
+//         .then(editor => {
+//             editorInstance = editor;
+//             window.editorInstance = editor; // Optional: assign to window
+//         })
+//         .catch(error => {
+//             console.error(error);
+//         });
+//        $('#submitBtn').on('click', function (e) {
+//     e.preventDefault();
+
+//             document.querySelector('#PlanDescription').value = editorInstance.getData();
+//        });
+//         // Create FormData object
+//         var form = $('#mobile_menu_content_form')[0];
+//         var formData = new FormData(form); // Ensure form is properly referenced
+
+//         const Status = $('#statusDropdown').val();  // Get selected value of status
+//         formData.append('Status', Status);
+
+//         $.ajax({
+//             url: "/subscription/add_plan_ajax/",
+//             type: 'POST',
+//             data: formData,
+//             dataType: 'json',
+//             processData: false, // Important for FormData
+//             contentType: false, // Important for FormData
+//             success: function(res) {
+//                 console.log('Response from server:', res); // Debugging response
+//                 if (res.status === true) {
+//                     // Show success message or redirect
+//                     alert('Category added successfully!');
+//                     $('#mobile_menu_content_form')[0].reset(); // Reset the form
+//                 } else {
+//                     // Handle failure case
+//                     alert(res.message || 'An error occurred while adding the category.');
+//                 }
+//             },
+//             error: function(xhr, ajaxOptions, thrownError) {
+//                 console.error('Error occurred:', xhr.responseText); // Log error response
+//                 alert('An error occurred. Please try again later.');
+//             }
+//         });
+//     });
+// });
+
+let editorInstance;
+
+// ✅ Initialize CKEditor once on DOM ready
+$(document).ready(function () {
+    ClassicEditor
+        .create(document.querySelector('#PlanDescription'))
+        .then(editor => {
+            editorInstance = editor;
+        })
+        .catch(error => {
+            console.error('CKEditor init error:', error);
+        });
+
+    // ✅ Submit handler
+    $('.submit_btns').on('click', function (e) {
+        e.preventDefault();
+        $('.text-danger').html('');
 
         var UserName = $('#UserName').val();
         var UserMobile = $('#UserMobile').val();
         var return_false = 0;
 
-        // Input validation
+        // ✅ Simple validation
         if (UserName.trim() === '') {
             $('#span_CategoryName').html('Please enter UserName');
             $('#UserName').focus();
-            return_false = 1;
+            return false;
         } else if (UserMobile.trim() === '') {
-            $('#span_UserMobile').html('Please enter UserName');
-            $('#UserMobile').focus(); // Focus on the thumbnail input
-            return_false = 1;
-        } 
+            $('#span_UserMobile').html('Please enter UserMobile');
+            $('#UserMobile').focus();
+            return false;
+        }
 
-        // Prevent form submission if validation fails
-        if (return_false === 1) {
+        // ✅ Make sure CKEditor is ready
+        if (!editorInstance) {
+            alert('Editor is not ready yet. Please wait.');
             return;
         }
 
-        let editorInstance;
-        ClassicEditor
-        .create(document.querySelector('#PlanDescription'))
-        .then(editor => {
-            editorInstance = editor;
-            window.editorInstance = editor; // Optional: assign to window
-        })
-        .catch(error => {
-            console.error(error);
-        });
-        // Create FormData object
-        var form = $('#mobile_menu_content_form')[0];
-        var formData = new FormData(form); // Ensure form is properly referenced
+        // ✅ Sync CKEditor data to textarea
+        document.querySelector('#PlanDescription').value = editorInstance.getData();
 
-        const Status = $('#statusDropdown').val();  // Get selected value of status
+        // ✅ Create FormData
+        var form = $('#mobile_menu_content_form')[0];
+        var formData = new FormData(form);
+
+        // ✅ Add dropdown status if needed
+        const Status = $('#statusDropdown').val();
         formData.append('Status', Status);
 
+        // ✅ Send AJAX request
         $.ajax({
             url: "/subscription/add_plan_ajax/",
             type: 'POST',
             data: formData,
             dataType: 'json',
-            processData: false, // Important for FormData
-            contentType: false, // Important for FormData
-            success: function(res) {
-                console.log('Response from server:', res); // Debugging response
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                console.log('Response from server:', res);
                 if (res.status === true) {
-                    // Show success message or redirect
                     alert('Category added successfully!');
-                    $('#mobile_menu_content_form')[0].reset(); // Reset the form
+                    $('#mobile_menu_content_form')[0].reset();
+                    editorInstance.setData(''); // Clear CKEditor content too
                 } else {
-                    // Handle failure case
                     alert(res.message || 'An error occurred while adding the category.');
                 }
             },
-            error: function(xhr, ajaxOptions, thrownError) {
-                console.error('Error occurred:', xhr.responseText); // Log error response
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.error('Error occurred:', xhr.responseText);
                 alert('An error occurred. Please try again later.');
             }
         });
     });
 });
+
 
 
 

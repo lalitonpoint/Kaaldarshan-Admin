@@ -12,8 +12,10 @@ const express = require('express');
 const app = express();
 app.use(express.json()); // For parsing application/json
 app.use(express.urlencoded({ extended: true })); // For parsing form data
-const Plan = require('../models/Subscription')
+const Category = require('../models/Category');
 const Backend_User = require('../models/User');
+const User = require('../api/models/userModel');
+const Plan = require('../models/Subscription')
 
 
 
@@ -35,7 +37,7 @@ app.use((req, res, next) => {
             if (!plan_validity || !plan_name || Status === undefined) {
                 return res.status(400).json({ message: 'Name, mobile, and status are required.' });
             }
-    
+           await Plan.sync();
             // Create user
             const newUser = await Plan.create({
                 plan_name : plan_name,
