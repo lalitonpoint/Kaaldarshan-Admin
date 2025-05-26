@@ -56,7 +56,7 @@ app.use((req, res, next) => {
 
 
 
-async function get_all_user_ajax(req, res) {
+async function get_all_subscription_ajax(req, res) {
     const requestData = req.body || {}; 
 
     // Safely access properties with defaults
@@ -65,7 +65,7 @@ async function get_all_user_ajax(req, res) {
 
     try {
         // Get total count of records
-        const totalCount = await User.count({
+        const totalCount = await Plan.count({
             where: { Status: { [Op.ne]: 3 } }
         });
 
@@ -79,9 +79,10 @@ async function get_all_user_ajax(req, res) {
                 { Status: { [Op.ne]: 3 } },
                 {
                     [Op.or]: [
-                        { name: { [Op.like]: `%${searchValue}%` } },
-                        { mobile: { [Op.like]: `%${searchValue}%` } },
-                        { password: { [Op.like]: `%${searchValue}%` } },
+                        { plan_name: { [Op.like]: `%${searchValue}%` } },
+                        { plan_amount: { [Op.like]: `%${searchValue}%` } },
+                        { plan_validity: { [Op.like]: `%${searchValue}%` } },
+                         { plan_feature: { [Op.like]: `%${searchValue}%` } },
                         { Status: { [Op.like]: `%${searchValue}%` } }
                     ]
                 }
@@ -89,10 +90,10 @@ async function get_all_user_ajax(req, res) {
         }
     
         // Get filtered count using the whereClause
-        const filteredCount = await User.count({ where: whereClause });
+        const filteredCount = await Plan.count({ where: whereClause });
 
         // Get filtered data
-        const user = await User.findAll({
+        const user = await Plan.findAll({
             where: whereClause,
             // include: [
             //     {
@@ -111,8 +112,10 @@ async function get_all_user_ajax(req, res) {
         const data = user.map(row => { console.log(row);
             return [
                 row.id,
-                row.name, // Column 1
-                row.mobile,
+                row.plan_name, // Column 1
+                row.plan_amount,
+                row.plan_validity,
+                // row.plan_feature,
                 // row.user?.name || row.TrnBy, // Column 3 (use TrnBy if name is not available)
                 // row.TrnOn, // Column 4
                 row.Status === 2
@@ -254,7 +257,7 @@ async function updateUser(req, res) {
 
 module.exports = {
     
-    get_all_user_ajax,
+    get_all_subscription_ajax,
     edit_user,
     status_change,
     updateUser,

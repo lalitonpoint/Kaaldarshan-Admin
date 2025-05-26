@@ -81,9 +81,10 @@
                                             <thead>
                                                 <tr>
                                                      <th style="max-width:40px;">S.No.</th>
-                                                    <th>User Name </th>
-                                                    <th>User Mobile</th>
-                                                    
+                                                    <th>Plan Name </th>
+                                                    <th>Plan Amount</th>
+                                                    <th>Plan Validity</th>
+                                                    <!-- <th>Plan Feature</th> -->
                                                     <!-- <th>Category Banner</th> -->
                                                     <!-- <th>Action By</th> -->
                                                     <!-- <th>Action On</th> -->
@@ -97,8 +98,8 @@
                                                     <th></th>
                                                     <th></th>
                                                     <th></th>
-                                                    <!-- <th></th>
-                                                    <th></th> -->
+                                                    <!-- <th></th> -->
+                                                    <th></th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -136,7 +137,7 @@
     <div class="modal-dialog modal-lg scrolldialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit User</h5>
+                <h5 class="modal-title">Edit Plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -145,15 +146,20 @@
                     <input type="hidden" name="id" id="edituserId">
 
                     <div class="mb-3">
-                        <label for="editCategoryName" class="form-label">User Name</label>
+                        <label for="editCategoryName" class="form-label">Plan Name</label>
                         <input type="text" class="form-control" name="userName" id="edituserName" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">User Mobile</label><br>
+                        <label class="form-label">plan Amount</label><br>
                         <input type="text" class="form-control" name="userMobile" id="editusermobile" required>
 
                         <!-- <img id="thumbnailPreview" src="" alt="Thumbnail" width="100" height="60" style="border:1px solid #ccc;"> -->
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editCategoryName" class="form-label">Plan Validity</label>
+                        <input type="text" class="form-control" name="userName" id="edituserName" required>
                     </div>
 
                     <!-- <div class="mb-3">
@@ -209,7 +215,7 @@
             [1, "asc"] // Default order by second column
         ],
         "ajax": {
-            url: "user/get_all_user_ajax/", // JSON datasource
+            url: "subscription/get_all_subscription_ajax/", // JSON datasource
             type: "POST", // Use POST method
             data: function (d) {
                 // Add additional parameters if needed
