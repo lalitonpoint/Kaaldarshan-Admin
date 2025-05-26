@@ -122,13 +122,10 @@ async function get_all_subscription_ajax(req, res) {
                     ? `<span class="disabled_detail"><span class="disabled_td mr-1"><i class="fa fa-times-circle" aria-hidden="true"></i></span> Disabled</span>`
                     : `<span class="enabled_detail"><span class="enabled_td me-1"><i class="fa fa-clock-o"></i></span>Enabled</span>`, // Column 5
                 `
-                        <a class='view_data_chk btn-xs bold' href='/user/edit_user/${row.id}'>
+                        <a class='view_data_chk btn-xs bold' href='/subscription/edit_subscription/${row.id}'>
                             <i class='fa fa-pencil' aria-hidden='true'></i> Edit</a>
-                        ${row.Status === 1 ? `<a class='disable_menudd btn-xs bold' href='/user/status_change/${row.id}/${row.Status}' id='${row.id}'>
-                            <i class='fa fa-ban' aria-hidden='true'></i> Disable</a>` : ''}
-                        ${row.Status === 2 ? `<a class='enable_menu1 btn-xs bold' href='/user/status_change/${row.id}/${row.Status}' id='${row.id}'>
-                            <i class='fa fa-ban' aria-hidden='true'></i> Enable</a>` : ''}
-                        <a class='btn-xs bold delete_menu1'href='/user/status_change/${row.id}/3' id='${row.id}'>
+                        
+                        <a class='btn-xs bold delete_menu1'href='/subscription/status_change/${row.id}/3' id='${row.id}'>
                             <i class='fa fa-trash' aria-hidden='true'></i> Delete</a>
                     ` // Column 6 (action buttons)
             ];
@@ -150,22 +147,22 @@ async function get_all_subscription_ajax(req, res) {
         });
     }
 }
-async function edit_user (req, res){
+async function edit_subscription (req, res){
     try {
-        const user_id = req.params.id;
+        const subscription_id = req.params.id;
     
-        const user = await User.findOne({
+        const subscription = await Plan.findOne({
             where: {
-                id: user_id
+                id: subscription_id
             }
     });
     
-        if (user.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
+        if (subscription.length === 0) {
+            return res.status(404).json({ message: 'subscription not found' });
         }
-        res.json(user); // Return the single category
+        res.json(subscription); // Return the single category
     } catch (error) {
-        console.error('Error fetching user by ID:', error);
+        console.error('Error fetching subscription by ID:', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }
@@ -188,16 +185,16 @@ async function status_change(req, res) {
 
          newStatus = currentStatus === 1 ? 2 : 1;
         }
-        const [updated] = await User.update(
+        const [updated] = await Plan.update(
             { Status: newStatus },
             { where: { id: id } }
         );
 
         if (updated === 0) {
-            return res.status(404).json({ message: 'User not found or status unchanged' });
+            return res.status(404).json({ message: 'Plan not found or status unchanged' });
         }
 
-        return res.redirect('/user');
+        // return res.redirect('/user');
 
     } catch (error) {
         console.error('Error updating user status:', error);
@@ -205,7 +202,7 @@ async function status_change(req, res) {
     }
 }
 
-async function updateUser(req, res) {
+async function updatesubscription(req, res) {
     try {
         const form = new multiparty.Form();
 
@@ -216,34 +213,41 @@ async function updateUser(req, res) {
             }
 
             const id = req.params.id;
-            const userName = fields.userName ? fields.userName[0] : null;
-            const userMobile = fields.userMobile ? fields.userMobile[0] : null;
+            const plan_name = fields.plan_name ? fields.plan_name[0] : null;
+            const plan_amount = fields.plan_amount ? fields.plan_amount[0] : null;
+            const plan_valifity = fields.plan_valifity ? fields.plan_valifity[0] : null;
+            const plan_feature = fields.plan_feature ? fields.plan_feature[0] : null;
             const Status = fields.Status ? fields.Status[0] : null;
 
-            if (!userName) {
-                return res.status(400).json({ message: 'User Name is required' });
+            if (!plan_name) {
+                return res.status(400).json({ message: 'Plan Name is required' });
             }
 
-            if (!userMobile) {
-                return res.status(400).json({ message: 'user Mobile  is required' });
+            if (!plan_amount) {
+                return res.status(400).json({ message: 'Plan Amount  is required' });
+            }
+            if (!plan_valifity) {
+                return res.status(400).json({ message: 'Plan Validity  is required' });
             }
 
             let updateData = {
-                name: userName,
-                mobile :userMobile,
+                plan_name: plan_name,
+                plan_amount :plan_amount,
+                plan_valifity : plan_valifity,
+                plan_feature : plan_feature,
                 Status : Status
             };
                 // If no image was uploaded, just update the name
-                const [updated] = await User.update(updateData, {
+                const [updated] = await Plan.update(updateData, {
                     where: { id: id }
                 });
 
                 if (updated === 0) {
-                    return res.status(404).json({ message: 'User not found or no change made' });
+                    return res.status(404).json({ message: 'Plan not found or no change made' });
                 }
 
-                res.json({ message: 'User updated successfully' });
-                return res.redirect('/user');
+                res.json({ message: 'Plan updated successfully' });
+                // return res.redirect('/Subscription');
         });
 
     } catch (error) {
@@ -258,9 +262,9 @@ async function updateUser(req, res) {
 module.exports = {
     
     get_all_subscription_ajax,
-    edit_user,
+    edit_subscription,
     status_change,
-    updateUser,
+    updatesubscription,
     add_plan_ajax
    
 };

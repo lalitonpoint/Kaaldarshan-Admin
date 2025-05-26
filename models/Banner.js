@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../connection'); // Adjust path based on your setup
 
 const Banner = sequelize.define('Banner', {
-  Banner_MstId: {
+  id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
@@ -35,7 +35,7 @@ const Banner = sequelize.define('Banner', {
   }
 }, {
   timestamps: false, // If you're not using the default `createdAt` and `updatedAt`
-  tableName: 'mst_banner' // Adjust to your actual table name if needed
+  tableName: 'banner' // Adjust to your actual table name if needed
 });
 
 module.exports = Banner;

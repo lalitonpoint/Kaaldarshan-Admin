@@ -147,25 +147,32 @@
 
                     <div class="mb-3">
                         <label for="editCategoryName" class="form-label">Plan Name</label>
-                        <input type="text" class="form-control" name="userName" id="edituserName" required>
+                        <input type="text" class="form-control" name="plan_name" id="editPlanName" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">plan Amount</label><br>
-                        <input type="text" class="form-control" name="userMobile" id="editusermobile" required>
+                        <input type="text" class="form-control" name="plan_amount" id="editPlanAmount" required>
 
                         <!-- <img id="thumbnailPreview" src="" alt="Thumbnail" width="100" height="60" style="border:1px solid #ccc;"> -->
                     </div>
 
                     <div class="mb-3">
                         <label for="editCategoryName" class="form-label">Plan Validity</label>
-                        <input type="text" class="form-control" name="userName" id="edituserName" required>
+                        <input type="text" class="form-control" name="plan_valifity" id="editPlanValidity" required>
                     </div>
 
                     <!-- <div class="mb-3">
                         <label for="editCategoryThumb" class="form-label">Upload New Thumbnail</label>
                         <input type="file" class="form-control" name="CategoryThumb" id="editCategoryThumb" accept="image/*" required>
                     </div> -->
+
+                     <div class="col-md-12 mb-3">
+                                    <label for="planDescription" class="label_mb_dt mb-1">Plan Description</label>
+                                    <textarea name="plan_feature" id="PlanDescription1" rows="5" class="form-control"></textarea>
+                                    <span class="text-danger" id="error_PlanDescription"></span>
+                      </div>
+
                      <div class="form-group">
                         <label for="statusDropdown">Status</label>
                         <select id="statusDropdown2" class="form-control">
@@ -426,11 +433,11 @@ $(document).ready(function () {
 
         // ✅ Simple validation
         if (UserName.trim() === '') {
-            $('#span_CategoryName').html('Please enter UserName');
+            $('#span_CategoryName').html('Please enter Plan Name');
             $('#UserName').focus();
             return false;
         } else if (UserMobile.trim() === '') {
-            $('#span_UserMobile').html('Please enter UserMobile');
+            $('#span_UserMobile').html('Please enter Amount');
             $('#UserMobile').focus();
             return false;
         }
@@ -515,22 +522,22 @@ $(function() { // Dropdown toggle
             }
         });
     }
-    function updateMenuOrder(data) {
-    $.ajax({
-        url: "category/category_menu_position", // Adjust the URL if necessary
-        type: 'POST', // Ensure the method is POST
-        contentType: 'application/json', // Set content type to JSON if sending as JSON
-        data: JSON.stringify({ position: data }), // Convert the data to JSON string
-        success: function(response) {
-            show_toast('success', 'Position has been saved successfully', '');
-            $("#mobile-order-mgmt-tab").click(); // Trigger the click event
-        },
-        error: function(xhr, status, error) {
-            console.error('Error details:', error); // Log error details for debugging
-            show_toast('danger', 'Something went wrong', '');
-        }
-    });
-}
+//     function updateMenuOrder(data) {
+//     $.ajax({
+//         url: "category/category_menu_position", // Adjust the URL if necessary
+//         type: 'POST', // Ensure the method is POST
+//         contentType: 'application/json', // Set content type to JSON if sending as JSON
+//         data: JSON.stringify({ position: data }), // Convert the data to JSON string
+//         success: function(response) {
+//             show_toast('success', 'Position has been saved successfully', '');
+//             $("#mobile-order-mgmt-tab").click(); // Trigger the click event
+//         },
+//         error: function(xhr, status, error) {
+//             console.error('Error details:', error); // Log error details for debugging
+//             show_toast('danger', 'Something went wrong', '');
+//         }
+//     });
+// }
 
 
 
@@ -715,6 +722,18 @@ $(document).on('click', '.enable_menu', function(e) {
 
 });
 
+    let myEditor; // declare a variable to hold the instance
+
+    ClassicEditor
+        .create(document.querySelector('#PlanDescription1'))
+        .then(editor => {
+            myEditor = editor; // save reference
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+
 $(document).on('click', '.view_data_chk', function(e) {
     e.preventDefault();
     var url = $(this).attr('href');
@@ -728,10 +747,15 @@ $(document).on('click', '.view_data_chk', function(e) {
 
         },
         success: function(res) { 
-            $('#edituserName').val(res.name);  // Set Category Name
-            $('#editusermobile').val(res.mobile); 
+            $('#editPlanName').val(res.plan_name);  // Set Category Name
+            $('#editPlanAmount').val(res.plan_amount); 
+            $('#editPlanValidity').val(res.plan_validity);
+            // $('#PlanDescription1').val(res.plan_feature);
             $('#edituserId').val(res.id);
             $('#statusDropdown2').val(res.Status); 
+             if (myEditor) {
+        myEditor.setData(res.plan_feature); // Set CKEditor 5 data
+    }
             $("#modified_area_popup").modal({
                 show: false,
                 backdrop: 'static'
@@ -816,15 +840,16 @@ $(document).on('click', '#mobile-order-mgmt-tab', function(e) {
     // const Status = $('#statusDropdown').val();  // Get selected value of status
      formData.append('Status', Status);
     $.ajax({
-        url: '/user/updateUser'+ '/'+id, // Your controller endpoint
+        url: '/subscription/updatesubscription'+ '/'+id, // Your controller endpoint
         type: 'post',
         data: formData,
         contentType: false,
         processData: false,
         success: function (response) {
-            alert('User updated successfully!');
+            alert('Plan updated successfully!');
             $('#modified_area_popup').modal('hide');
             // Optionally refresh table or update UI
+             $('#all-user-grid').DataTable().ajax.reload();
         },
         error: function (xhr, status, error) {
             console.error('Error:', error);

@@ -132,7 +132,7 @@ async function get_all_banners_ajax(req, res) {
         const categories = await Banner.findAll({
             where: whereClause, // Use the whereClause for filtering
             include: [{ model: User, as: 'user', attributes: ['name'] }], // Assuming you have a User model
-            order: [['Banner_MstId', 'DESC']],
+            order: [['id', 'DESC']],
             offset: start,
             limit: length,
         });
