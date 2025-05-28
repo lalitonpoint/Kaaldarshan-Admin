@@ -12,7 +12,8 @@ const categoryRoutes = require('./routes/categoryRoutes'); // Import the route
 const userRoutes = require('./routes/userRoutes'); // Import the route
 const healerRoutes = require('./routes/healerRoutes'); // Import the route
 const bannerRoutes = require('./routes/bannerRoutes'); // Import the route
-const subscriptionRoutes = require('./routes/subscriptionRoutes')
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const blogRoutes = require('./routes/blogRoutes');
 const apiRoutes = require('./api/routes/indexRoutes'); // Import the route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 require('dotenv').config();
@@ -51,6 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/category', categoryRoutes);  // URL will be /category/add_category_ajax
 app.use('/user',userRoutes);
 app.use('/subscription',subscriptionRoutes);
+app.use('/blog',blogRoutes);
 app.use('/healer', healerRoutes);  // URL will be /category/add_category_ajax
 app.use('/banner', bannerRoutes);  // URL will be /category/add_category_ajax
 
@@ -180,6 +182,21 @@ app.get('/subscription', (req, res) => {
 
     res.render('template', {
         title: 'subscription Page',
+        body: body,
+        user: req.session.user
+    });
+});
+
+app.get('/blog', (req, res) => {
+    //console.log(req.session.user);
+    if (!req.session.user) {
+        return res.status(401).json({ message: "You need to log in first." });
+    }
+    const body = 'blog/add_blog';
+    //console.log(body); // This will log to the server console
+
+    res.render('template', {
+        title: 'Blogs Page',
         body: body,
         user: req.session.user
     });
