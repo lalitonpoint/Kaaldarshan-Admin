@@ -13,26 +13,24 @@
       <li><a href="/Banner"><i class="bi bi-person navicon"></i> Banner Management</a></li>
       <li><a href="/Subscription"><i class="bi bi-person navicon"></i> Subscription Management</a></li>
       <li><a href="/blog"><i class="bi bi-person navicon"></i> Blogs Management</a></li>
-     <li><a href="/blog"><i class="bi bi-person navicon"></i> Detail Management</a></li>
+     <li><a href="/blog"><i class="bi bi-person navicon"></i> Ticket Management</a></li>
 
-      <!-- <li><a href="/Healer"><i class="bi bi-person navicon"></i> Healer</a></li> -->
-      <!-- <li class="dropdown"><a href="#"><i class="bi bi-menu-button navicon"></i> <span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-        <ul>
-          <li><a href="#">Dropdown 1</a></li>
-          <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-            <ul>
-              <li><a href="#">Deep Dropdown 1</a></li>
-              <li><a href="#">Deep Dropdown 2</a></li>
-              <li><a href="#">Deep Dropdown 3</a></li>
-              <li><a href="#">Deep Dropdown 4</a></li>
-              <li><a href="#">Deep Dropdown 5</a></li>
-            </ul>
-          </li>
-          <li><a href="#">Dropdown 2</a></li>
-          <li><a href="#">Dropdown 3</a></li>
-          <li><a href="#">Dropdown 4</a></li>
-        </ul>
-      </li>
-      <li><a href="#contact"><i class="bi bi-envelope navicon"></i> Contact</a></li> -->
     </ul>
   </nav>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const links = document.querySelectorAll('.navmenu a');
+    const currentPath = window.location.pathname;
+
+    links.forEach(link => {
+      // Remove existing active classes
+      link.classList.remove('active');
+
+      // If current URL starts with the link's href, set active
+      if (currentPath.startsWith(link.getAttribute('href'))) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>

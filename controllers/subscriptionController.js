@@ -237,17 +237,17 @@ async function updatesubscription(req, res) {
                 plan_feature : plan_feature,
                 Status : Status
             };
-                // If no image was uploaded, just update the name
-                const [updated] = await Plan.update(updateData, {
-                    where: { id: id }
-                });
 
-                if (updated === 0) {
-                    return res.status(404).json({ message: 'Plan not found or no change made' });
-                }
+             const existingBlog = await Plan.findOne({ where: { Id: id } });
 
-                res.json({ message: 'Plan updated successfully' });
-                // return res.redirect('/Subscription');
+            if (!existingBlog) {
+                return res.status(404).json({ message: 'Plan not found' });
+            }
+                 await Plan.update(updateData, {
+                where: { Id: id }
+            });
+
+            return res.json({ message: 'Plan updated successfully' });
         });
 
     } catch (error) {

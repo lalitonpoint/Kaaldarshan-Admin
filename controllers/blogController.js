@@ -164,15 +164,15 @@ async function get_all_blog_ajax(req, res) {
                 row.Description, // Column 4
                 row.Status === 2
                     ? `<span class="disabled_detail"><span class="disabled_td mr-1"><i class="fa fa-times-circle" aria-hidden="true"></i></span> Disabled</span>`
-                    : `<span class="enabled_detail"><span class="enabled_td me-1"><i class="fa fa-clock-o"></i></span>Enabled</span>`, // Column 5
+                    : `<span class="enabled_detail"><span class="enabled_td me-1"><i class="fas fa-clock"></i></span>Enabled</span>`, // Column 5
                 `
                         <a class='view_data_chk btn-xs bold' href='/blog/edit_blog/${row.Id}'>
                             <i class='fa fa-pencil' aria-hidden='true'></i> Edit</a>
-                        ${row.Status === 1 ? `<a class='disable_menudd btn-xs bold' href='/Category/status_change/${row.CategoryId}/${row.Status}' id='${row.CategoryId}'>
+                        ${row.Status === 1 ? `<a class='disable_menudd btn-xs bold' href='/blog/status_change/${row.Id}/${row.Status}' id='${row.Id}'>
                             <i class='fa fa-ban' aria-hidden='true'></i> Disable</a>` : ''}
-                        ${row.Status === 2 ? `<a class='enable_menu1 btn-xs bold' href='/Category/status_change/${row.CategoryId}/${row.Status}' id='${row.CategoryId}'>
+                        ${row.Status === 2 ? `<a class='enable_menu1 btn-xs bold' href='/blog/status_change/${row.Id}/${row.Status}' id='${row.Id}'>
                             <i class='fa fa-ban' aria-hidden='true'></i> Enable</a>` : ''}
-                        <a class='btn-xs bold delete_menu1'href='/Category/status_change/${row.CategoryId}/3' id='${row.CategoryId}'>
+                        <a class='btn-xs bold delete_menu1'href='/blog/status_change/${row.Id}/3' id='${row.Id}'>
                             <i class='fa fa-trash' aria-hidden='true'></i> Delete</a>
                     ` // Column 6 (action buttons)
             ];
@@ -364,8 +364,7 @@ async function updateBlog(req, res) {
             if (!existingBlog) {
                 return res.status(404).json({ message: 'Blog not found' });
             }
-console.log("SDcefc");
-console.log(updateData);
+
             await Blog.update(updateData, {
                 where: { Id: Id }
             });
@@ -382,7 +381,7 @@ console.log(updateData);
 
 async function status_change(req, res) {
     try {
-        const categoryId = req.params.id;
+        const Id = req.params.id;
         const currentStatus = parseInt(req.params.Status);
        
 
@@ -398,19 +397,19 @@ async function status_change(req, res) {
 
          newStatus = currentStatus === 1 ? 2 : 1;
         }
-        const [updated] = await Category.update(
+        const [updated] = await Blog.update(
             { Status: newStatus },
-            { where: { CategoryId: categoryId } }
+            { where: { Id: Id } }
         );
 
         if (updated === 0) {
-            return res.status(404).json({ message: 'Category not found or status unchanged' });
+            return res.status(404).json({ message: 'Blog not found or status unchanged' });
         }
 
-        return res.redirect('/Category');
+        return res.redirect('/Blog');
 
     } catch (error) {
-        console.error('Error updating category status:', error);
+        console.error('Error updating Blog status:', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }

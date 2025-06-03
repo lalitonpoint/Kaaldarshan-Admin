@@ -1,5 +1,11 @@
 
-
+<style>
+    table .enabled_detail {
+    padding: 4px;
+    display: flex;
+    align-items: center;
+}
+</style>
 <div class="">
     <div class="bg-white">
         <div class="container-fluid">
@@ -91,7 +97,7 @@
                                                     <th>Tags </th>
                                                     <th>Desciption </th>
                                                     <th>Status </th>
-                                                    <th>Action </th>
+                                                    <th style="min-width:200px;">Action </th>
                                                 </tr>
                                        
                                                 <tr class="dnr" >
@@ -785,6 +791,7 @@ $(document).on('click', '#mobile-order-mgmt-tab', function(e) {
         success: function (response) {
             alert('Blog updated successfully!');
             $('#modified_area_popup').modal('hide');
+            $('#all-user-grid').DataTable().ajax.reload();
             // Optionally refresh table or update UI
         },
         error: function (xhr, status, error) {
