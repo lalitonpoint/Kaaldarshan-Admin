@@ -783,13 +783,13 @@ $(document).on('click', '#mobile-order-mgmt-tab', function(e) {
         contentType: false,
         processData: false,
         success: function (response) {
-            alert('Category updated successfully!');
+            alert('Blog updated successfully!');
             $('#modified_area_popup').modal('hide');
             // Optionally refresh table or update UI
         },
         error: function (xhr, status, error) {
             console.error('Error:', error);
-            alert('Something went wrong while updating the category.');
+            alert('Something went wrong while updating the blog.');
         }
     });
 });

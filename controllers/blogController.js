@@ -110,7 +110,7 @@ const addBlog = [
 
 async function get_all_blog_ajax(req, res) {
     const requestData = req.body || {}; // Ensure requestData is defined
-    console.log('requested data', req.body);
+    // console.log('requested data', req.body);
 
     // Safely access properties with defaults
     const start = parseInt(requestData.start) || 0; // Default to 0
@@ -328,65 +328,49 @@ async function updateBlog(req, res) {
             const Status = fields.Status ? fields.Status[0] : null;
 
             if (!BlogTitle) {
-                return res.status(400).json({ message: 'Blog Title  is required' });
+                return res.status(400).json({ message: 'Blog Title is required' });
             }
 
             if (!blogTags) {
-                return res.status(400).json({ message: 'blog Tags  is required' });
+                return res.status(400).json({ message: 'Blog Tags are required' });
             }
 
             let updateData = {
                 Title: BlogTitle,
-                Tags : blogTags,
-                Desciption : desciption,
-                Status : Status
+                Tags: blogTags,
+                Description: desciption,
+                Status: Status
             };
 
-          
             // Handle file upload
             if (thumbFile && thumbFile.originalFilename) {
-                console.log("comiong into if consiton");
-                 try {
+                try {
                     const tempPath = thumbFile.path;
                     const extension = path.extname(thumbFile.originalFilename);
                     const fileName = `${Date.now()}${extension}`;
                     const uploadPath = path.join(__dirname, '../uploads', fileName);
 
                     await fs.promises.rename(tempPath, uploadPath);
-
                     updateData.Thumb = `uploads/${fileName}`;
                 } catch (fileError) {
                     console.error("Error saving file:", fileError);
                     return res.status(500).json({ message: 'File saving failed' });
                 }
-                    // Perform the database update after file move
-                    const [updated] = await Blog.update(updateData, {
-                        where: { Id: Id }
-                       
-                    });
-
-                    if (updated === 0) {
-                        return res.status(404).json({ message: 'Blog not found or no change made' });
-                    }
-
-                    res.json({ message: 'Blog updated successfully' });
-                // });
-            } 
-            
-            
-            
-            else {
-                // If no image was uploaded, just update the name
-                const [updated] = await Blog.update(updateData, {
-                    where: { Id: Id }
-                });
-
-                if (updated === 0) {
-                    return res.status(404).json({ message: 'Blogs not found or no change made' });
-                }
-
-                res.json({ message: 'Blog updated successfully' });
             }
+
+            // Check if blog exists before attempting update
+            const existingBlog = await Blog.findOne({ where: { Id: Id } });
+
+            if (!existingBlog) {
+                return res.status(404).json({ message: 'Blog not found' });
+            }
+console.log("SDcefc");
+console.log(updateData);
+            await Blog.update(updateData, {
+                where: { Id: Id }
+            });
+
+            return res.json({ message: 'Blog updated successfully' });
         });
 
     } catch (error) {
@@ -394,6 +378,7 @@ async function updateBlog(req, res) {
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }
+
 
 async function status_change(req, res) {
     try {
