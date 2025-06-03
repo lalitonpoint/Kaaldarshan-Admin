@@ -62,7 +62,7 @@
 
                                   <div class="col-md-12 mb-3">
                                     <label for="planDescription" class="label_mb_dt mb-1">Blog Description</label>
-                                    <textarea name="plan_feature" id="PlanDescription1" rows="5" class="form-control"></textarea>
+                                    <textarea name="description" id="PlanDescription1" rows="5" class="form-control"></textarea>
                                     <span class="text-danger" id="error_PlanDescription"></span>
                       </div>
                                 
@@ -85,11 +85,11 @@
                                             <thead>
                                                 <tr>
                                                      <th style="max-width:40px;">S.No.</th>
-                                                    <th>Category Name </th>
-                                                    <th>Category Thumbnail lo</th>
+                                                    <th> Title </th>
+                                                    <th> Thumbnail</th>
                                                     <!-- <th>Category Banner</th> -->
-                                                    <th>Action By</th>
-                                                    <th>Action On</th>
+                                                    <th>Tags </th>
+                                                    <th>Desciption </th>
                                                     <th>Status </th>
                                                     <th>Action </th>
                                                 </tr>
@@ -139,7 +139,7 @@
     <div class="modal-dialog modal-lg scrolldialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Edit Category</h5>
+                <h5 class="modal-title">Edit Blog</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -148,18 +148,23 @@
                     <input type="hidden" name="CategoryId" id="editCategoryId">
 
                     <div class="mb-3">
-                        <label for="editCategoryName" class="form-label">Category Name</label>
-                        <input type="text" class="form-control" name="CategoryName" id="editCategoryName" required>
+                        <label for="editCategoryName" class="form-label">Blog Title</label>
+                        <input type="text" class="form-control" name="BlogTitle" id="editBlogTitle" required>
+                    </div>
+
+                     <div class="mb-3">
+                        <label for="editCategoryName" class="form-label">Blog Tags</label>
+                        <input type="text" class="form-control" name="blogTags" id="editBlogTags" required>
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Current Thumbnail</label><br>
+                        <label class="form-label">Current Blog Image</label><br>
                         <img id="thumbnailPreview" src="" alt="Thumbnail" width="100" height="60" style="border:1px solid #ccc;">
                     </div>
 
                     <div class="mb-3">
-                        <label for="editCategoryThumb" class="form-label">Upload New Thumbnail</label>
-                        <input type="file" class="form-control" name="CategoryThumb" id="editCategoryThumb" accept="image/*" required>
+                        <label for="editCategoryThumb" class="form-label">Upload New Image</label>
+                        <input type="file" class="form-control" name="CategoryThumb" id="editCategoryThumb" accept="image/*" >
                     </div>
                     <div class="form-group">
                         <label for="statusDropdown">Status</label>
@@ -168,6 +173,12 @@
                             <option value="2">Inactive</option>
                         </select>
                     </div>
+
+                    <div class="col-md-12 mb-3">
+                                    <label for="planDescription" class="label_mb_dt mb-1">Plan Description</label>
+                                    <textarea name="desciption" id="PlanDescription" rows="5" class="form-control"></textarea>
+                                    <span class="text-danger" id="error_PlanDescription"></span>
+                      </div>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
             </div>
@@ -210,7 +221,7 @@
             [1, "asc"] // Default order by second column
         ],
         "ajax": {
-            url: "Category/get_all_category_ajax/", // JSON datasource
+            url: "blog/get_all_blog_ajax/", // JSON datasource
             type: "POST", // Use POST method
             data: function (d) {
                 // Add additional parameters if needed
@@ -327,7 +338,17 @@ function validatepdf(){
             $("#"+this.event.target.id).val('');
         }    
     }
+
+ let editorInstance;
     $(document).ready(function() {
+        ClassicEditor
+        .create(document.querySelector('#PlanDescription1'))
+        .then(editor => {
+            editorInstance = editor;
+        })
+        .catch(error => {
+            console.error('CKEditor init error:', error);
+        });
     $('.submit_btns').on('click', function(e) {
         e.preventDefault(); // Prevent default form submission
         $('.text-danger').html(''); // Clear any previous error messages
@@ -361,6 +382,14 @@ function validatepdf(){
             return;
         }
 
+         if (!editorInstance) {
+            alert('Editor is not ready yet. Please wait.');
+            return;
+        }
+
+        // ✅ Sync CKEditor data to textarea
+            document.querySelector('#PlanDescription1').value = editorInstance.getData();
+
         // Create FormData object
         var form = $('#mobile_menu_content_form')[0];
         var formData = new FormData(form); // Ensure form is properly referenced
@@ -380,6 +409,8 @@ function validatepdf(){
                 if (res.status === true) {
                     // Show success message or redirect
                     alert('Blogs added successfully!');
+                    // $('#all-user-grid').DataTable().ajax.reload(null, false); 
+                    location.reload();
                     $('#mobile_menu_content_form')[0].reset(); // Reset the form
                 } else {
                     // Handle failure case
@@ -630,10 +661,10 @@ $(document).on('click', '.enable_menu', function(e) {
 
 });
 
- let myEditor; // declare a variable to hold the instance
+let myEditor; // declare a variable to hold the instance
 
     ClassicEditor
-        .create(document.querySelector('#PlanDescription1'))
+        .create(document.querySelector('#PlanDescription'))
         .then(editor => {
             myEditor = editor; // save reference
         })
@@ -654,10 +685,14 @@ $(document).on('click', '.view_data_chk', function(e) {
 
         },
         success: function(res) { 
-            $('#editCategoryName').val(res.CategoryName);  // Set Category Name
-            $('#thumbnailPreview').attr('src', res.CategoryThumb); 
-            $('#editCategoryId').val(res.CategoryId);
-            $('#statusDropdown2').val(res.Status); 
+            $('#editBlogTitle').val(res.Title);  // Set Category Name
+            $('#editBlogTags').val(res.Tags);
+             $('#thumbnailPreview').attr('src', res.Thumb); 
+            $('#editCategoryId').val(res.Id);
+            $('#statusDropdown2').val(res.Status);
+             if (myEditor) {
+                myEditor.setData(res.Description); // Set CKEditor 5 data
+            } 
             $("#modified_area_popup").modal({
                 show: false,
                 backdrop: 'static'
@@ -742,7 +777,7 @@ $(document).on('click', '#mobile-order-mgmt-tab', function(e) {
     // const Status = $('#statusDropdown').val();  // Get selected value of status
      formData.append('Status', Status);
     $.ajax({
-        url: '/category/updateCategory'+ '/'+id, // Your controller endpoint
+        url: '/blog/updateBlog'+ '/'+id, // Your controller endpoint
         type: 'post',
         data: formData,
         contentType: false,

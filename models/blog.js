@@ -16,8 +16,12 @@ const Blogs = sequelize.define('Blogs', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    CategoryThumb: {
+    Thumb: {
         type: DataTypes.STRING,
+        allowNull: false,
+    },
+    Description :{
+         type: DataTypes.STRING,
         allowNull: false,
     },
     Creation_Date: {

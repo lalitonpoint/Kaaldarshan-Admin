@@ -70,7 +70,7 @@ const addBlog = [
         
             const BlogTitle = req.body.BlogTitle || null;
             const blogTags = req.body.blogTags || null;
-
+            const description = req.body.description || null;
             
             const Status = req.body.Status || null;
 
@@ -81,16 +81,17 @@ const addBlog = [
             return res.status(400).json({ status: false, message: 'Thumbnail is required' });
         }
 
-        const imagePath = `uploads/${file.filename}`; // Path to store the image
-        // const user_id = req.session.user.id;          // Get user ID from session
-        const currentDate = new Date();               // Get the current date
+        const imagePath = `uploads/${file.filename}`; 
+        // const user_id = req.session.user.id;          
+        const currentDate = new Date();               
          await Blog.sync();
         try {
             // Insert the data into the database using Sequelize
             const blog = await Blog.create({
                 Title:BlogTitle,
                 Tags : blogTags,
-                 CategoryThumb: imagePath,
+                Thumb: imagePath,
+                Description:description,
                 TrnOn: currentDate,
                 // TrnBy: user_id,
                 Status : Status
@@ -107,7 +108,7 @@ const addBlog = [
 
 
 
-async function get_all_category_ajax(req, res) {
+async function get_all_blog_ajax(req, res) {
     const requestData = req.body || {}; // Ensure requestData is defined
     console.log('requested data', req.body);
 
@@ -117,7 +118,7 @@ async function get_all_category_ajax(req, res) {
 
     try {
         // Get total count of records
-        const totalCount = await Category.count({
+        const totalCount = await Blog.count({
             where: { Status: { [Op.ne]: 3 } }
         });
 
@@ -127,36 +128,45 @@ async function get_all_category_ajax(req, res) {
         };
 
         if (searchValue) {
-            whereClause.CategoryName = {
-                [Op.like]: `%${searchValue}%`
-            };
+            whereClause[Op.and] = [
+                { Status: { [Op.ne]: 3 } },
+                {
+                    [Op.or]: [
+                        { Title: { [Op.like]: `%${searchValue}%` } },
+                        { Tags: { [Op.like]: `%${searchValue}%` } },
+                        { Description: { [Op.like]: `%${searchValue}%` } },
+                         { Id: { [Op.like]: `%${searchValue}%` } },
+                        { Status: { [Op.like]: `%${searchValue}%` } }
+                    ]
+                }
+            ];
         }
 
         // Get filtered count using the whereClause
-        const filteredCount = await Category.count({ where: whereClause });
+        const filteredCount = await Blog.count({ where: whereClause });
 
         // Get filtered data
-        const categories = await Category.findAll({
+        const blog = await Blog.findAll({
             where: whereClause, // Use the whereClause for filtering
-            include: [{ model: User, as: 'user', attributes: ['name'] }], // Assuming you have a User model
-            order: [['CategoryId', 'DESC']],
+           
+            order: [['Id', 'DESC']],
             offset: start,
             limit: length,
         });
 
         // Format the data for DataTables
-        const data = categories.map(row => {
+        const data = blog.map(row => {
             return [
-                row.CategoryId,
-                row.CategoryName, // Column 1
-                `<img width="80" height="50" src="${row.CategoryThumb}">`, // Column 2
-                row.user?.name || row.TrnBy, // Column 3 (use TrnBy if name is not available)
-                row.TrnOn, // Column 4
+                row.Id,
+                row.Title, // Column 1
+                `<img width="80" height="50" src="${row.Thumb}">`, // Column 2
+                row.Tags, // Column 3 (use TrnBy if name is not available)
+                row.Description, // Column 4
                 row.Status === 2
                     ? `<span class="disabled_detail"><span class="disabled_td mr-1"><i class="fa fa-times-circle" aria-hidden="true"></i></span> Disabled</span>`
                     : `<span class="enabled_detail"><span class="enabled_td me-1"><i class="fa fa-clock-o"></i></span>Enabled</span>`, // Column 5
                 `
-                        <a class='view_data_chk btn-xs bold' href='/Category/edit_category/${row.CategoryId}'>
+                        <a class='view_data_chk btn-xs bold' href='/blog/edit_blog/${row.Id}'>
                             <i class='fa fa-pencil' aria-hidden='true'></i> Edit</a>
                         ${row.Status === 1 ? `<a class='disable_menudd btn-xs bold' href='/Category/status_change/${row.CategoryId}/${row.Status}' id='${row.CategoryId}'>
                             <i class='fa fa-ban' aria-hidden='true'></i> Disable</a>` : ''}
@@ -278,20 +288,20 @@ async function dashboard_details_data(req, res) {
     }
   }
 
-  async function edit_category(req, res) {
+  async function edit_blog(req, res) {
     try {
-        const categoryId = req.params.id;
+        const BlogId = req.params.id;
     
-        const category = await Category.findOne({
+        const blog = await Blog.findOne({
             where: {
-                CategoryId: categoryId
+                Id: BlogId
             }
     });
     
-        if (category.length === 0) {
-            return res.status(404).json({ message: 'Category not found' });
+        if (blog.length === 0) {
+            return res.status(404).json({ message: 'Blog not found' });
         }
-        res.json(category); // Return the single category
+        res.json(blog); // Return the single category
     } catch (error) {
         console.error('Error fetching category by ID:', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -300,7 +310,7 @@ async function dashboard_details_data(req, res) {
 
 
 
-async function updateCategory(req, res) {
+async function updateBlog(req, res) {
     try {
         const form = new multiparty.Form();
 
@@ -310,61 +320,72 @@ async function updateCategory(req, res) {
                 return res.status(400).json({ error: "Form parsing failed" });
             }
 
-            const categoryId = req.params.CategoryId;
-            const categoryName = fields.CategoryName ? fields.CategoryName[0] : null;
+            const Id = fields.CategoryId ? fields.CategoryId[0] : null;
+            const BlogTitle = fields.BlogTitle ? fields.BlogTitle[0] : null;
+            const blogTags = fields.blogTags ? fields.blogTags[0] : null;
+            const desciption = fields.desciption ? fields.desciption[0] : null;
             const thumbFile = files.CategoryThumb ? files.CategoryThumb[0] : null;
-            const Status = fields.Status ? fields.Status : null;
+            const Status = fields.Status ? fields.Status[0] : null;
 
-            if (!categoryName) {
-                return res.status(400).json({ message: 'Category Name is required' });
+            if (!BlogTitle) {
+                return res.status(400).json({ message: 'Blog Title  is required' });
             }
 
-            if (!thumbFile) {
-                return res.status(400).json({ message: 'thumbFile Name is required' });
+            if (!blogTags) {
+                return res.status(400).json({ message: 'blog Tags  is required' });
             }
 
             let updateData = {
-                CategoryName: categoryName,
+                Title: BlogTitle,
+                Tags : blogTags,
+                Desciption : desciption,
                 Status : Status
             };
 
+          
             // Handle file upload
-            if (thumbFile) {
-                const tempPath = thumbFile.path;
-                const extension = path.extname(thumbFile.originalFilename);
-                const fileName = `${Date.now()}${extension}`;
-                const uploadPath = path.join(__dirname, '../uploads', fileName); // Adjust path as needed
+            if (thumbFile && thumbFile.originalFilename) {
+                console.log("comiong into if consiton");
+                 try {
+                    const tempPath = thumbFile.path;
+                    const extension = path.extname(thumbFile.originalFilename);
+                    const fileName = `${Date.now()}${extension}`;
+                    const uploadPath = path.join(__dirname, '../uploads', fileName);
 
-                fs.rename(tempPath, uploadPath, async (err) => {
-                    if (err) {
-                        console.error("Error saving file:", err);
-                        return res.status(500).json({ message: 'File saving failed' });
-                    }
+                    await fs.promises.rename(tempPath, uploadPath);
 
-                    updateData.CategoryThumb = `uploads/${fileName}`;
-
+                    updateData.Thumb = `uploads/${fileName}`;
+                } catch (fileError) {
+                    console.error("Error saving file:", fileError);
+                    return res.status(500).json({ message: 'File saving failed' });
+                }
                     // Perform the database update after file move
-                    const [updated] = await Category.update(updateData, {
-                        where: { CategoryId: categoryId }
+                    const [updated] = await Blog.update(updateData, {
+                        where: { Id: Id }
+                       
                     });
 
                     if (updated === 0) {
-                        return res.status(404).json({ message: 'Category not found or no change made' });
+                        return res.status(404).json({ message: 'Blog not found or no change made' });
                     }
 
-                    res.json({ message: 'Category updated successfully' });
-                });
-            } else {
+                    res.json({ message: 'Blog updated successfully' });
+                // });
+            } 
+            
+            
+            
+            else {
                 // If no image was uploaded, just update the name
-                const [updated] = await Category.update(updateData, {
-                    where: { CategoryId: categoryId }
+                const [updated] = await Blog.update(updateData, {
+                    where: { Id: Id }
                 });
 
                 if (updated === 0) {
-                    return res.status(404).json({ message: 'Category not found or no change made' });
+                    return res.status(404).json({ message: 'Blogs not found or no change made' });
                 }
 
-                res.json({ message: 'Category updated successfully' });
+                res.json({ message: 'Blog updated successfully' });
             }
         });
 
@@ -414,11 +435,11 @@ async function status_change(req, res) {
 
 module.exports = {
     addBlog,
-    get_all_category_ajax,
+    get_all_blog_ajax,
     get_wall_menu_data,
     category_menu_position,
     dashboard_details_data,
-    edit_category,
+    edit_blog,
     status_change,
-    updateCategory
+    updateBlog
 };
