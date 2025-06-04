@@ -35,6 +35,10 @@ app.use('/api', (req, res, next) => {
       // Bypass JWT for /signup
       return next();
     }
+     if (req.path === '/signup/login') {
+      // Bypass JWT for /signup
+      return next();
+    }
     // Apply JWT middleware for all other routes
     authenticateJWT(req, res, next);
   });
