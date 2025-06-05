@@ -24,8 +24,9 @@ const raise_ticket = async (req, res) => {
      const newTicket = await Ticket_Raise.create({
       user_id,
       user_query,
-      Query_status: 0, 
-      status :0,
+      sender : "user",
+      Query_status: 1, 
+      status :1,
       created_at: new Date(),
       modified_time: new Date()
     });

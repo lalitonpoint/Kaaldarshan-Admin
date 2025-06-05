@@ -11,6 +11,14 @@ const Ticket = sequelize.define('Ticket', {
       type: DataTypes.TEXT,
       allowNull: true
     },
+     sender: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+     admin_reply: {
+          type: DataTypes.TEXT,
+          allowNull: true
+        },
     Query_status: {
       type: DataTypes.INTEGER, // e.g. 0 = open, 1 = in-progress, 2 = resolved
       defaultValue: 0

@@ -211,7 +211,7 @@ function fetchChatMessages(ticketId) {
         msgDiv.className = `chat-message ${isUser ? 'user' : 'admin'}`;
         msgDiv.innerHTML = `
           <div class="chat-bubble">
-            <p>${msg.user_query}</p>
+            <p>${msg.user_query || msg.admin_reply}</p>
             <span class="timestamp">${new Date(msg.created_at).toLocaleString()}</span>
           </div>
         `;
@@ -225,27 +225,45 @@ function fetchChatMessages(ticketId) {
     });
 }
 
-
-
-
 document.getElementById("chatForm").addEventListener("submit", function(e) {
   e.preventDefault();
   const ticketId = document.getElementById("ticketId").value;
   const message = document.getElementById("chatInput").value;
-    const formData = new FormData();
+
+  if (!message.trim()) return;
+
+  // ⏱ 1. Show admin message immediately in UI
+  const container = document.getElementById("chatContainer");
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'chat-message admin';
+  msgDiv.innerHTML = `
+    <div class="chat-bubble">
+      <p>${message}</p>
+      <span class="timestamp">${new Date().toLocaleString()}</span>
+    </div>
+  `;
+  container.appendChild(msgDiv);
+  container.scrollTop = container.scrollHeight;
+
+  // 🔄 2. Submit via API in background
+  const formData = new FormData();
   formData.append('admin_reply', message);
-  formData.append('sender','admin');
+  formData.append('sender', 'admin');
+
   fetch(`/ticket/updateTicket/${ticketId}`, {
     method: 'POST',
-     body: formData
+    body: formData
   })
-    .then(res => res.json())
-    .then(() => {
-      document.getElementById("chatInput").value = '';
-      fetchChatMessages(ticketId);
-    });
+  .then(res => res.json())
+  .then(() => {
+    document.getElementById("chatInput").value = '';
+    // Optionally refetch from server to sync
+    // fetchChatMessages(ticketId);
+  })
+  .catch(err => console.error('Message send error:', err));
 });
 </script>
+
 
 <script type="text/javascript">
  jQuery(document).ready(function() {
