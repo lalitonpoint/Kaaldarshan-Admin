@@ -218,23 +218,9 @@ async function updateTicket(req, res) {
                 return res.status(400).json({ error: "Form parsing failed" });
             }
 
-            const id = req.params.id;
+            // const id = req.params.id;
             const admin_reply = fields.admin_reply ? fields.admin_reply[0] : null;
-                       const sender = fields.sender ? fields.sender[0] : null;
-
-
-            // if (!Q_status) {
-            //     return res.status(400).json({ message: 'User Name is required' });
-            // }
-
-            // let updateData = {
-            //     admin_reply :admin_reply,
-               
-            // };
-                // If no image was uploaded, just update the name
-                // const [updated] = await Ticket.update(updateData, {
-                //     where: { id: id }
-                // });
+            const sender = fields.sender ? fields.sender[0] : null;
 
                 const newUser = await Ticket.create({
                 user_id : 2,
