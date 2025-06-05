@@ -14,6 +14,7 @@ const healerRoutes = require('./routes/healerRoutes'); // Import the route
 const bannerRoutes = require('./routes/bannerRoutes'); // Import the route
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const blogRoutes = require('./routes/blogRoutes');
+const ticketRoutes = require('./routes/ticketRoutes');
 const apiRoutes = require('./api/routes/indexRoutes'); // Import the route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 require('dotenv').config();
@@ -57,6 +58,7 @@ app.use('/category', categoryRoutes);  // URL will be /category/add_category_aja
 app.use('/user',userRoutes);
 app.use('/subscription',subscriptionRoutes);
 app.use('/blog',blogRoutes);
+app.use('/ticket',ticketRoutes);
 app.use('/healer', healerRoutes);  // URL will be /category/add_category_ajax
 app.use('/banner', bannerRoutes);  // URL will be /category/add_category_ajax
 
@@ -216,6 +218,21 @@ app.get('/banner', (req, res) => {
 
     res.render('template', {
         title: 'Category Page',
+        body: body,
+        user: req.session.user
+    });
+});
+
+app.get('/ticket_management', (req, res) => {
+    //console.log(req.session.user);
+    if (!req.session.user) {
+        return res.status(401).json({ message: "You need to log in first." });
+    }
+    const body = 'raise_ticket/ticket_management';
+    //console.log(body); // This will log to the server console
+
+    res.render('template', {
+        title: 'Ticket Page',
         body: body,
         user: req.session.user
     });
