@@ -79,7 +79,7 @@
                                                 </tr>
                                        
                                                 <tr class="dnr" >
-                                                    <th  style="max-width:40px;"><input type="text" data-column="1" class="search-input-text form-control"></th>
+                                                    <th></th>  
                                                     <th></th>
                                                     <th></th>
                                                     <!-- <th></th> -->
@@ -212,18 +212,18 @@
     jQuery("#" + table + "_filter").css("display", "none");
 
     // For text input search
-    $('.search-input-text').on('keyup click', function() {
-        var i = $(this).data('column'); // getting column index using jQuery's .data() method
-        var v = $(this).val(); // getting search input value
-        dataTable.columns(i).search(v).draw(); // Search and redraw the table
-    });
+    // $('.search-input-text').on('keyup click', function() {
+    //     var i = $(this).data('column'); // getting column index using jQuery's .data() method
+    //     var v = $(this).val(); // getting search input value
+    //     dataTable.columns(i).search(v).draw(); // Search and redraw the table
+    // });
 
     // For select box search
-    $('.search-input-select').on('change', function() {
-        var i = $(this).data('column'); // getting column index using jQuery's .data() method
-        var v = $(this).val(); // getting selected value
-        dataTable.columns(i).search(v).draw(); // Search and redraw the table
-    });
+    // $('.search-input-select').on('change', function() {
+    //     var i = $(this).data('column'); // getting column index using jQuery's .data() method
+    //     var v = $(this).val(); // getting selected value
+    //     dataTable.columns(i).search(v).draw(); // Search and redraw the table
+    // });
 });
 
 

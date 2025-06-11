@@ -120,10 +120,9 @@ async function get_all_about_ajax(req, res) {
                 { Status: { [Op.ne]: 3 } },
                 {
                     [Op.or]: [
-                        { Title: { [Op.like]: `%${searchValue}%` } },
-                        { Tags: { [Op.like]: `%${searchValue}%` } },
+                        
                         { Description: { [Op.like]: `%${searchValue}%` } },
-                         { Id: { [Op.like]: `%${searchValue}%` } },
+                       
                         { Status: { [Op.like]: `%${searchValue}%` } }
                     ]
                 }
@@ -131,7 +130,7 @@ async function get_all_about_ajax(req, res) {
         }
 
         // Get filtered count using the whereClause
-        const filteredCount = await Blog.count({ where: whereClause });
+        const filteredCount = await About.count({ where: whereClause });
 
         // Get filtered data
         const about = await About.findAll({
