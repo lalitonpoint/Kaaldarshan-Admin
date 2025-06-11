@@ -16,6 +16,7 @@ const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 const ticketRoutes = require('./routes/ticketRoutes');
 const testimonialRoutes = require('./routes/testimonialRoutes');
+const aboutusRoutes = require('./routes/aboutRoutes');
 const apiRoutes = require('./api/routes/indexRoutes'); // Import the route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 require('dotenv').config();
@@ -61,6 +62,7 @@ app.use('/subscription',subscriptionRoutes);
 app.use('/blog',blogRoutes);
 app.use('/ticket',ticketRoutes);
 app.use('/testimonial',testimonialRoutes);
+app.use('/about',aboutusRoutes);
 app.use('/healer', healerRoutes);  // URL will be /category/add_category_ajax
 app.use('/banner', bannerRoutes);  // URL will be /category/add_category_ajax
 
@@ -119,9 +121,9 @@ app.post("/login", async (req, res) => {
 
 
 // Other routes (home, about)
-app.get('/about', (req, res) => {
-    res.send("Hello, this is the about page.");
-});
+// app.get('/about', (req, res) => {
+//     res.send("Hello, this is the about page.");
+// });
 
 app.get('/home', (req, res) => {
     //console.log(req.session.user);
@@ -250,6 +252,21 @@ app.get('/Testimonial_management', (req, res) => {
 
     res.render('template', {
         title: 'Testimonial Page',
+        body: body,
+        user: req.session.user
+    });
+});
+
+app.get('/about_us', (req, res) => {
+    //console.log(req.session.user);
+    if (!req.session.user) {
+        return res.status(401).json({ message: "You need to log in first." });
+    }
+    const body = 'basic_info/about_us';
+    //console.log(body); // This will log to the server console
+
+    res.render('template', {
+        title: 'About Page',
         body: body,
         user: req.session.user
     });
