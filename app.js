@@ -18,6 +18,7 @@ const ticketRoutes = require('./routes/ticketRoutes');
 const testimonialRoutes = require('./routes/testimonialRoutes');
 const aboutusRoutes = require('./routes/aboutRoutes');
 const term_conditionRoutes = require('./routes/termRoutes');
+const privacyRoutes = require('./routes/privacyRoutes');
 const apiRoutes = require('./api/routes/indexRoutes'); // Import the route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 require('dotenv').config();
@@ -64,6 +65,7 @@ app.use('/blog',blogRoutes);
 app.use('/ticket',ticketRoutes);
 app.use('/testimonial',testimonialRoutes);
 app.use('/term_condition',term_conditionRoutes);
+app.use('/privacy_policy',privacyRoutes);
 app.use('/about',aboutusRoutes);
 app.use('/healer', healerRoutes);  // URL will be /category/add_category_ajax
 app.use('/banner', bannerRoutes);  // URL will be /category/add_category_ajax
@@ -280,6 +282,21 @@ app.get('/term_condition', (req, res) => {
         return res.status(401).json({ message: "You need to log in first." });
     }
     const body = 'basic_info/term_and_condition';
+    //console.log(body); // This will log to the server console
+
+    res.render('template', {
+        title: 'Term Page',
+        body: body,
+        user: req.session.user
+    });
+});
+
+app.get('/privacy_policy', (req, res) => {
+    //console.log(req.session.user);
+    if (!req.session.user) {
+        return res.status(401).json({ message: "You need to log in first." });
+    }
+    const body = 'basic_info/privacy_policy';
     //console.log(body); // This will log to the server console
 
     res.render('template', {

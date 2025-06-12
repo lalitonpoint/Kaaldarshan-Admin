@@ -58,7 +58,6 @@ const addterm = [
     
     // upload.single('CategoryThumb'), // File upload middleware
     async (req, res) => {
-        console.log("bhjbefjhebjeberjbfejherbejrhbfjherfbefbju");
         // Handle validation errors from express-validator
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -99,23 +98,25 @@ const addterm = [
 
 
 
-async function get_all_about_ajax(req, res) {
+async function get_all_term_ajax(req, res) {
     const requestData = req.body || {}; // Ensure requestData is defined
-    // console.log('requested data', req.body);
 
-    // Safely access properties with defaults
     const start = parseInt(requestData.start) || 0; // Default to 0
     const length = parseInt(requestData.length) || 10; // Default to 10
 
     try {
         // Get total count of records
-        const totalCount = await About.count({
-            where: { Status: { [Op.ne]: 3 } }
-        });
+        const baseWhereClause = {
+            Status: { [Op.ne]: 3 },
+            type: 2
+        };
+        
+        const totalCount = await About.count({ where: baseWhereClause });
 
         const searchValue = requestData.search?.value || '';
         const whereClause = {
-            Status: { [Op.ne]: 3 }
+            Status: { [Op.ne]: 3 },
+            type:2
         };
 
         if (searchValue) {
@@ -153,13 +154,13 @@ async function get_all_about_ajax(req, res) {
                     ? `<span class="disabled_detail"><span class="disabled_td mr-1"><i class="fa fa-times-circle" aria-hidden="true"></i></span> Disabled</span>`
                     : `<span class="enabled_detail"><span class="enabled_td me-1"><i class="fas fa-clock"></i></span>Enabled</span>`, // Column 5
                 `
-                        <a class='view_data_chk btn-xs bold' href='/about/edit_about/${row.Id}'>
+                        <a class='view_data_chk btn-xs bold' href='/term_condition/edit_term/${row.Id}'>
                             <i class='fa fa-pencil' aria-hidden='true'></i> Edit</a>
-                        ${row.Status === 1 ? `<a class='disable_menudd btn-xs bold' href='/about/status_change/${row.Id}/${row.Status}' id='${row.Id}'>
+                        ${row.Status === 1 ? `<a class='disable_menudd btn-xs bold' href='/term_condition/status_change/${row.Id}/${row.Status}' id='${row.Id}'>
                             <i class='fa fa-ban' aria-hidden='true'></i> Disable</a>` : ''}
-                        ${row.Status === 2 ? `<a class='enable_menu1 btn-xs bold' href='/about/status_change/${row.Id}/${row.Status}' id='${row.Id}'>
+                        ${row.Status === 2 ? `<a class='enable_menu1 btn-xs bold' href='/term_condition/status_change/${row.Id}/${row.Status}' id='${row.Id}'>
                             <i class='fa fa-ban' aria-hidden='true'></i> Enable</a>` : ''}
-                        <a class='btn-xs bold delete_menu1'href='/about/status_change/${row.Id}/3' id='${row.Id}'>
+                        <a class='btn-xs bold delete_menu1'href='/term_condition/status_change/${row.Id}/3' id='${row.Id}'>
                             <i class='fa fa-trash' aria-hidden='true'></i> Delete</a>
                     ` // Column 6 (action buttons)
             ];
@@ -275,7 +276,7 @@ async function dashboard_details_data(req, res) {
     }
   }
 
-  async function edit_about(req, res) {
+  async function edit_term(req, res) {
     try {
         const BlogId = req.params.id;
     
@@ -286,7 +287,7 @@ async function dashboard_details_data(req, res) {
     });
     
         if (blog.length === 0) {
-            return res.status(404).json({ message: 'About us not found' });
+            return res.status(404).json({ message: 'term us not found' });
         }
         res.json(blog); // Return the single category
     } catch (error) {
@@ -366,7 +367,7 @@ async function status_change(req, res) {
             return res.status(404).json({ message: 'About not found or status unchanged' });
         }
 
-        return res.redirect('/about_us');
+        return res.redirect('/term_condition');
 
     } catch (error) {
         console.error('Error updating About status:', error);
@@ -379,11 +380,11 @@ async function status_change(req, res) {
 
 module.exports = {
     addterm,
-    get_all_about_ajax,
+    get_all_term_ajax,
     get_wall_menu_data,
     category_menu_position,
     dashboard_details_data,
-    edit_about,
+    edit_term,
     status_change,
     updateAbout
 };
