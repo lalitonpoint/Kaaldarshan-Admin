@@ -13,12 +13,12 @@
                 <div class="col-md-12">
                     <ul class="nav nav-tabs mobile_app_nav" id="myTab" role="tablist">
                         <li class="nav-item " role="presentation">
-                            <a class="nav-link active" id="mobile-menu-list-tab" data-bs-toggle="tab" data-bs-target="#mobile-menu-list" type="button" role="tab" href="#mobile-menu-list" aria-controls="mobile-menu-list" aria-selected="true">About
+                            <a class="nav-link active" id="mobile-menu-list-tab" data-bs-toggle="tab" data-bs-target="#mobile-menu-list" type="button" role="tab" href="#mobile-menu-list" aria-controls="mobile-menu-list" aria-selected="true">Term & Conditon
                                 List</a>
                         </li>
                         
                         <li class="nav-item" role="presentation">
-                            <a class="nav-link " id="mobile-menu-tab" data-bs-toggle="tab" data-bs-target="#mobile-menu" type="button" role="tab" href="#mobile-menu" aria-controls="mobile-menu" aria-selected="false">Add About Us </a>
+                            <a class="nav-link " id="mobile-menu-tab" data-bs-toggle="tab" data-bs-target="#mobile-menu" type="button" role="tab" href="#mobile-menu" aria-controls="mobile-menu" aria-selected="false">Add Term & Conditon </a>
                         </li>
                        <!-- <li class="nav-item" role="presentation">
                             <a class="nav-link" id="mobile-order-mgmt-tab" data-bs-toggle="tab" data-bs-target="#mobile-order-mgmt" type="button" role="tab" href="#mobile-order-mgmt" aria-controls="mobile-order-mgmt" aria-selected="false">Category Ordering</a>
@@ -34,18 +34,18 @@
                 <div class="tab-content mabile_app_content mobile_banner_content my-3 " id="myTabContent">
                     <div class="tab-pane fade " id="mobile-menu" role="tabpanel" aria-labelledby="mobile-menu-tab">
                         <form class="mobile_menu_form mobile_dash_dt" method="post" id="mobile_menu_content_form" enctype="multipart/form-data" autocomplete="off">
-                            <input type="hidden" id="type_data" name="type" value="1" />
+                            <input type="hidden" id="type_data" name="type" value="2" />
                             <div class="row">
                             
                 
                                   <div class="col-md-12 mb-3">
-                                    <label for="planDescription" class="label_mb_dt mb-1">About Us Description</label>
+                                    <label for="planDescription" class="label_mb_dt mb-1">Term & Condition</label>
                                     <textarea name="description" id="PlanDescription1" rows="5" class="form-control"></textarea>
                                     <span class="text-danger" id="error_PlanDescription"></span>
                              </div>
 
                              <div class="col-md-6 mb-3">
-                                    <label for="statusDropdown"> Status</label>
+                                    <label for="statusDropdown">Status</label>
                                     <select id="statusDropdown" class="form-control">
                                          <option value="">-- Select Status --</option>
                                         <option value="1">Active</option>
@@ -362,7 +362,7 @@ function validatepdf(){
         const Status = $('#statusDropdown').val();  // Get selected value of status
         formData.append('Status', Status);
         $.ajax({
-            url: "/about/add_about_ajax/",
+            url: "/term_condition/add_term_ajax/",
             type: 'POST',
             data: formData,
             dataType: 'json',
@@ -372,7 +372,7 @@ function validatepdf(){
                 console.log('Response from server:', res); // Debugging response
                 if (res.status === true) {
                     // Show success message or redirect
-                    alert('About added successfully!');
+                    alert('term added successfully!');
                     // $('#all-user-grid').DataTable().ajax.reload(null, false); 
                     location.reload();
                     $('#mobile_menu_content_form')[0].reset(); // Reset the form
