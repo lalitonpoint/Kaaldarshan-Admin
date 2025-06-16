@@ -1,0 +1,755 @@
+
+<style>
+    table .enabled_detail {
+    padding: 4px;
+    display: flex;
+    align-items: center;
+}
+</style>
+<div class="">
+    <div class="bg-white">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="nav nav-tabs mobile_app_nav" id="myTab" role="tablist">
+                        <li class="nav-item " role="presentation">
+                            <a class="nav-link active" id="mobile-menu-list-tab" data-bs-toggle="tab" data-bs-target="#mobile-menu-list" type="button" role="tab" href="#mobile-menu-list" aria-controls="mobile-menu-list" aria-selected="true">Help & Support 
+                                List</a>
+                        </li>
+                        
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link " id="mobile-menu-tab" data-bs-toggle="tab" data-bs-target="#mobile-menu" type="button" role="tab" href="#mobile-menu" aria-controls="mobile-menu" aria-selected="false">Add Support </a>
+                        </li>
+                       <!-- <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="mobile-order-mgmt-tab" data-bs-toggle="tab" data-bs-target="#mobile-order-mgmt" type="button" role="tab" href="#mobile-order-mgmt" aria-controls="mobile-order-mgmt" aria-selected="false">Category Ordering</a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tab-content mabile_app_content mobile_banner_content my-3 " id="myTabContent">
+                    <div class="tab-pane fade " id="mobile-menu" role="tabpanel" aria-labelledby="mobile-menu-tab">
+                        <form class="mobile_menu_form mobile_dash_dt" method="post" id="mobile_menu_content_form" enctype="multipart/form-data" autocomplete="off">
+                            <input type="hidden" id="type_data" name="type" value="3" />
+                            <div class="row">
+                            
+                
+                                 <div class="col-md-12 mb-3">
+                                    <label for="email" class="label_mb_dt mb-1">Email</label>
+                                    <input type="text" name="email" id="email" class="form-control" placeholder="Enter Email" />
+                                    <span class="text-danger" id="error_email"></span>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <label for="mobile" class="label_mb_dt mb-1">Mobile</label>
+                                    <input type="text" name="mobile" id="mobile" class="form-control" placeholder="Enter Mobile"  />
+                                    <span class="text-danger" id="error_mobile"></span>
+                                </div>
+                             <div class="col-md-6 mb-3">
+                                    <label for="statusDropdown">Status</label>
+                                    <select id="statusDropdown" class="form-control">
+                                         <option value="">-- Select Status --</option>
+                                        <option value="1">Active</option>
+                                        <option value="2">Inactive</option>
+                                    </select>
+                                <span class="text-danger" id="span_Blogstatus"></span>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <button type="submit" class="dash_btn submit_btns">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="tab-pane fade show active" id="mobile-menu-list" role="tabpanel" aria-labelledby="mobile-menu-list-tab">
+                        
+                        <div class="col-sm-12">
+                            <section class="panel">
+                            
+                                <div class="panel-body">
+                                    <div class="adv-table ">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped bg-white mt-2" id="all-user-grid" style="width:99% !important; ">
+                                            <thead>
+                                                <tr>
+                                                     <th style="max-width:40px;">S.No.</th>
+                                                    <th>Email </th> 
+                                                    <th>Mobile </th>                                                
+                                                    <th>Status </th>
+                                                    <!-- <th style="min-width:200px;">Action </th> -->
+                                                </tr>
+                                       
+                                                <tr class="dnr" >
+                                                    <th></th>  
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                   
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                    </div>
+
+
+                    <div class="tab-pane fade" id="mobile-order-mgmt" role="tabpanel" aria-labelledby="mobile-order-mgmt-tab">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="d-flex align-items-center justify-content-between">
+                                  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mobile_menu_order_data" > </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="modified_area_popup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg scrolldialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit About Us</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body body_data_chk">
+                <form id="editCategoryForm" enctype="multipart/form-data">
+                    <input type="hidden" name="CategoryId" id="editCategoryId">
+
+
+                    <div class="col-md-12 mb-3">
+                                    <label for="planDescription" class="label_mb_dt mb-1"> Description</label>
+                                    <textarea name="desciption" id="PlanDescription" rows="5" class="form-control"></textarea>
+                                    <span class="text-danger" id="error_PlanDescription"></span>
+                      </div>
+
+                       <div class="form-group">
+                        <label for="statusDropdown">Status</label>
+                        <select id="statusDropdown2" class="form-control">
+                            <option value="1">Active</option>
+                            <option value="2">Inactive</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script type="text/javascript">
+ jQuery(document).ready(function() {
+    var table = 'all-user-grid';
+    var dataTable = jQuery("#" + table).DataTable({
+        "dom": '<l>Bfrtip',
+        "processing": true, // Show processing indicator
+        "pageLength": 10,
+        "paging": true,
+        "lengthMenu": [
+            [10, 20, 50, 100, 500],
+            [10, 20, 50, 100, 500]
+        ],
+        "serverSide": true,
+        "ordering": false,
+        "buttons": [
+            {
+                extend: 'csvHtml5',
+                exportOptions: {
+                    columns: [0, 2, 3, 4],
+                    rows: ":not('.dnr')" // Exclude rows with class 'dnr'
+                }
+            }
+        ],
+        "columnDefs": [{
+            "targets": [0, 2, 3],
+            "orderable": false // Disable ordering for specified columns
+        }],
+        "order": [
+            [1, "asc"] // Default order by second column
+        ],
+        "ajax": {
+            url: "help_support/get_all_support_ajax/", // JSON datasource
+            type: "POST", // Use POST method
+            data: function (d) {
+                // Add additional parameters if needed
+                // d.customParam = 'value'; // Example: additional parameters
+            },
+            error: function(xhr, error, thrown) { // Improved error handling
+                console.error("Error loading data: ", error);
+                jQuery("." + table + "-error").html("Error loading data.");
+                jQuery("#" + table + "_processing").css("display", "none");
+            },
+        },
+        "language": {
+            "paginate": {
+                "next": "Next",
+                "previous": "Previous"
+            },
+            "emptyTable": "No data available in table", // Custom message for empty table
+            "zeroRecords": "No matching records found" // Custom message for no matching records
+        }
+    });
+
+    // Hide the default filter input
+    jQuery("#" + table + "_filter").css("display", "none");
+
+    // For text input search
+    // $('.search-input-text').on('keyup click', function() {
+    //     var i = $(this).data('column'); // getting column index using jQuery's .data() method
+    //     var v = $(this).val(); // getting search input value
+    //     dataTable.columns(i).search(v).draw(); // Search and redraw the table
+    // });
+
+    // For select box search
+    // $('.search-input-select').on('change', function() {
+    //     var i = $(this).data('column'); // getting column index using jQuery's .data() method
+    //     var v = $(this).val(); // getting selected value
+    //     dataTable.columns(i).search(v).draw(); // Search and redraw the table
+    // });
+});
+
+
+</script>
+
+<script >
+
+
+
+
+$(document).ready(function() {
+    $('#CategoryName').keyup(function() {
+        $('.submit_btns').attr('disabled', false);
+        $('#span_CategoryName').html('');
+
+        var name = $('#CategoryName').val();
+        var sname = name.replace(/\s+/g, ' ');
+        $('#CategoryName').val(sname);
+
+        if (/[^a-zA-Z0-9-_, ]/.test(sname)) {
+            $('#span_CategoryName').html('Special characters are not allowed.');
+            $('.submit_btns').attr('disabled', true);
+        } else {
+            $('#span_CategoryName').html('');
+            $('.submit_btns').attr('disabled', false);
+        }
+    });
+});
+
+
+ 
+function thumbimage() {
+
+    var CategoryThumb = document.getElementById("CategoryThumb").value;
+    if (CategoryThumb)
+        var fileName = CategoryThumb;
+
+    var a = $("#CategoryThumb")[0].files[0].size;
+    var idxDot = fileName.lastIndexOf(".") + 1;
+    var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+    //alert(extFile);
+    if (extFile == "png" || extFile == "jpeg" || extFile == "jpg") {
+        if (CategoryThumb) $('#error_CategoryThumb').html('');
+        if (a < 990000){
+            if(CategoryThumb) $('#error_CategoryThumb').html('');
+        }else{
+            if(CategoryThumb) $('#error_CategoryThumb').html('Please select image less than 1 MB');
+            $("#"+this.event.target.id).val('');
+        } 
+    } else {
+        if (CategoryThumb) $('#error_CategoryThumb').html('Please select only png/jpeg format');
+        $("#" + this.event.target.id).val('');
+    }
+       
+}
+
+function validatepdf(){
+
+        var ThumImage = document.getElementById("choose_pdf").value;
+        if(ThumImage) 
+          var fileName =ThumImage;
+
+        var a=$("#choose_pdf")[0].files[0].size;
+        var idxDot = fileName.lastIndexOf(".") + 1;
+        var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+        //alert(extFile);
+        if (extFile=="pdf"){
+            if(ThumImage) $('#error_PdfUrl').html('');
+             if (a < 990000){
+               if(ThumImage) $('#error_PdfUrl').html('');
+           }else{
+               if(ThumImage) $('#error_PdfUrl').html('Please select a pdf less than 1 MB.');
+               $("#"+this.event.target.id).val('');
+           }
+        }else{
+            if(ThumImage) $('#error_PdfUrl').html('Please select only pdf format');
+            $("#"+this.event.target.id).val('');
+        }    
+    }
+
+  let editorInstance;
+    $(document).ready(function() {
+        // ClassicEditor
+        // .create(document.querySelector('#PlanDescription1'))
+        // .then(editor => {
+        //     editorInstance = editor;
+        // })
+        // .catch(error => {
+        //     console.error('CKEditor init error:', error);
+        // });
+    $('.submit_btns').on('click', function(e) {
+        e.preventDefault(); // Prevent default form submission
+        $('.text-danger').html(''); // Clear any previous error messages
+
+        // var CategoryName = $('#CategoryName').val();
+        var statusDropdown = $('#statusDropdown').val();
+        var return_false = 0;
+
+        // Input validation
+        // if (CategoryName.trim() === '') {
+        //     $('#span_CategoryName').html('Please enter Blog Title');
+        //     $('#CategoryName').focus();
+        //     return_false = 1;
+        // } 
+       if (statusDropdown.trim()===''){
+           $('#span_Blogstatus').html('Please Select status');
+            $('#statusDropdown').focus();
+            return_false = 1;  
+        }
+
+        
+        
+        if (return_false === 1) {
+            return;
+        }
+
+      
+        var form = $('#mobile_menu_content_form')[0];
+        var formData = new FormData(form); // Ensure form is properly referenced
+
+        const Status = $('#statusDropdown').val();  // Get selected value of status
+        formData.append('Status', Status);
+        $.ajax({
+            url: "/help_support/add_help_ajax/",
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            processData: false, // Important for FormData
+            contentType: false, // Important for FormData
+            success: function(res) {
+                console.log('Response from server:', res); // Debugging response
+                if (res.status === true) {
+                    // Show success message or redirect
+                    alert('Support added successfully!');
+                    // $('#all-user-grid').DataTable().ajax.reload(null, false); 
+                    location.reload();
+                    $('#mobile_menu_content_form')[0].reset(); // Reset the form
+                } else {
+                    // Handle failure case
+                    alert(res.message || 'An error occurred while adding the category.');
+                }
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                console.error('Error occurred:', xhr.responseText); // Log error response
+                alert('An error occurred. Please try again later.');
+            }
+        });
+    });
+});
+
+
+
+
+$(function() { // Dropdown toggle
+    $('.dropdown-toggle').click(function() {
+        $(this).next('.dropdowns').slideToggle();
+    });
+
+    $(document).click(function(e) {
+        var target = e.target;
+        if (!$(target).is('.dropdown-toggle') && !$(target).parents().is('.dropdown-toggle'))
+        //{ $('.dropdown').hide(); }
+        {
+            $('.dropdowns').slideUp();
+        }
+    });
+});
+
+
+
+</script>
+
+<script type = "text/javascript" >
+    function position_load() {
+        $(".row_position").sortable({
+            delay: 150,
+            axis: 'y',
+            stop: function() {
+                var selectedData = new Array();
+                $('.row_position>div').each(function() {
+                    selectedData.push($(this).attr("id"));
+                });
+                updateMenuOrder(selectedData);
+            }
+        });
+    }
+    function updateMenuOrder(data) {
+    $.ajax({
+        url: "category/category_menu_position", // Adjust the URL if necessary
+        type: 'POST', // Ensure the method is POST
+        contentType: 'application/json', // Set content type to JSON if sending as JSON
+        data: JSON.stringify({ position: data }), // Convert the data to JSON string
+        success: function(response) {
+            show_toast('success', 'Position has been saved successfully', '');
+            $("#mobile-order-mgmt-tab").click(); // Trigger the click event
+        },
+        error: function(xhr, status, error) {
+            console.error('Error details:', error); // Log error details for debugging
+            show_toast('danger', 'Something went wrong', '');
+        }
+    });
+}
+
+
+
+        
+
+$(document).on('click', '.delete_menu', function(e) {
+    e.preventDefault();
+    var id = $(this).attr("id");
+    swal({
+        title: '$delete_sm',
+        text: '$delete_lg',
+        // icon: "warning",
+        imageUrl: '$AUTH_ASSETS' + 'img/order_confirm.png',
+        imageWidth: 70,
+        imageHeight: 70,
+        allowOutsideClick: false,
+        imageAlt: 'Custom image',
+        animation: false,
+        confirmButtonColor: '#AA4A44',
+        cancelButtonColor: '#808080',
+        confirmButtonText: "Yes",
+        showCancelButton: true,
+        confirmButtonText: '$delete_btn_cfm',
+        cancelButtonText: '$confirm_cncl',
+        // confirmButtonClass: 'btn btn-success me-2',
+        // cancelButtonClass: 'btn btn-danger',
+    }).then((result) => {
+        if (result.value) {
+
+
+            $.ajax({
+                url: "$delete_category",
+                type: 'post',
+                dataType: 'Json',
+                data: {
+                    id: id,
+                    "{$this->security->get_csrf_token_name()}": "{$this->security->get_csrf_hash()}",
+                },
+                success: function(data) {
+                   if(data.token){
+                        $('input[name="{$this->security->get_csrf_token_name()}"]').val(data.token);
+                    }
+                    swal({
+                        title: '$sm_deleted',
+                        text: '$lg_deleted',
+                        // icon: 'success',
+                        imageUrl: '$AUTH_ASSETS' + 'img/order_confirms.png',
+                        imageWidth: 70,
+                        imageHeight: 70,
+                        allowOutsideClick: false,
+                        imageAlt: 'Custom image',
+                    }).then((result) => {
+
+                        location.reload();
+
+
+                    });
+                }
+            })
+        }
+    })
+
+});
+
+
+$(document).on('click', '.disable_menu', function(e) {
+    e.preventDefault();
+
+    var id = $(this).attr("id");
+    swal({
+        title: '$disable_sm',
+        text: '$disable_lg',
+        // icon: "warning",
+        imageUrl: '$AUTH_ASSETS' + 'img/order_confirm.png',
+        imageWidth: 70,
+        imageHeight: 70,
+        allowOutsideClick: false,
+        imageAlt: 'Custom image',
+        animation: false,
+        confirmButtonColor: '#AA4A44',
+        cancelButtonColor: '#808080',
+        confirmButtonText: "Yes",
+        showCancelButton: true,
+        // confirmButtonText: '$delete_btn_cfm',
+        // cancelButtonText: '$confirm_cncl',
+        // confirmButtonClass: 'btn btn-success me-2',
+        // cancelButtonClass: 'btn btn-danger',
+    }).then((result) => {
+        if (result.value) {
+
+
+            $.ajax({
+                url: "$disable_category",
+                type: 'post',
+                dataType: 'Json',
+                data: {
+                    "{$this->security->get_csrf_token_name()}": "{$this->security->get_csrf_hash()}",
+                    id: id
+                },
+                success: function(data) {
+                    if(data.token){
+                        $('input[name="{$this->security->get_csrf_token_name()}"]').val(data.token);
+                    }
+                    swal({
+                        title: '$disable_succ_sm',
+                        text: '$disable_succ_lg',
+                        // icon: 'success',
+                        imageUrl: '$AUTH_ASSETS' + 'img/order_confirms.png',
+                        imageWidth: 70,
+                        imageHeight: 70,
+                        allowOutsideClick: false,
+                        imageAlt: 'Custom image',
+                    }).then((result) => {
+
+                       location.reload();
+
+
+                    });
+                }
+            })
+        }
+    })
+
+});
+
+$(document).on('click', '.enable_menu', function(e) {
+    e.preventDefault();
+    var id = $(this).attr("id");
+    swal({
+        title: '$enable_sm',
+        text: '$enable_lg',
+        // icon: "warning",
+        imageUrl: '$AUTH_ASSETS' + 'img/order_confirm.png',
+        imageWidth: 70,
+        imageHeight: 70,
+        allowOutsideClick: false,
+        imageAlt: 'Custom image',
+        animation: false,
+        confirmButtonColor: '#AA4A44',
+        cancelButtonColor: '#808080',
+        confirmButtonText: "Yes",
+        showCancelButton: true,
+        // confirmButtonText: '$delete_btn_cfm',
+        // cancelButtonText: '$confirm_cncl',
+        // confirmButtonClass: 'btn btn-success me-2',
+        // cancelButtonClass: 'btn btn-danger',
+    }).then((result) => {
+        if (result.value) {
+
+
+            $.ajax({
+                url: "$enable_category",
+                type: 'post',
+                dataType: 'Json',
+                data: {
+                    "{$this->security->get_csrf_token_name()}": "{$this->security->get_csrf_hash()}",
+                    id: id
+                },
+                success: function(data) {
+                    if(data.token){
+                        $('input[name="{$this->security->get_csrf_token_name()}"]').val(data.token);
+                    }
+                    swal({
+                        title: '$enable_succ_sm',
+                        text: '$enable_succ_lg',
+                        // icon: 'success',
+                        imageUrl: '$AUTH_ASSETS' + 'img/order_confirms.png',
+                        imageWidth: 70,
+                        imageHeight: 70,
+                        allowOutsideClick: false,
+                        imageAlt: 'Custom image',
+                    }).then((result) => {
+
+                        location.reload();
+
+
+                    });
+                }
+            })
+        }
+    })
+
+});
+
+let myEditor; // declare a variable to hold the instance
+
+    ClassicEditor
+        .create(document.querySelector('#PlanDescription'))
+        .then(editor => {
+            myEditor = editor; // save reference
+        })
+        .catch(error => {
+            console.error(error);
+        });
+
+$(document).on('click', '.view_data_chk', function(e) {
+    e.preventDefault();
+    var url = $(this).attr('href');
+    const id = url.split('/').pop();
+    $.ajax({
+        url: url,
+        type: "get",
+        data: {
+           "{$this->security->get_csrf_token_name()}": "{$this->security->get_csrf_hash()}",
+           id :id
+
+        },
+        success: function(res) { 
+            $('#editBlogTitle').val(res.Title);  // Set Category Name
+            $('#editBlogTags').val(res.Tags);
+             $('#thumbnailPreview').attr('src', res.Thumb); 
+            $('#editCategoryId').val(res.Id);
+            $('#statusDropdown2').val(res.Status);
+             if (myEditor) {
+                myEditor.setData(res.Description); // Set CKEditor 5 data
+            } 
+            $("#modified_area_popup").modal({
+                show: false,
+                backdrop: 'static'
+            });
+            $('#modified_area_popup').modal('show');
+            $('.body_data_chk').html(res.wrapper);
+            //console.log(res);
+        }
+    });
+
+});
+
+
+$(document).on('click', '.view_buttonview_data_chk', function(e) {
+    e.preventDefault();
+    var url = $(this).attr('href');
+
+    $.ajax({
+        url: url,
+        type: "post",
+        data: {
+           "{$this->security->get_csrf_token_name()}": "{$this->security->get_csrf_hash()}"
+        },
+        success: function(res) {
+            $("#modified_area_popup").modal({
+                show: false,
+                backdrop: 'static'
+            });
+            $('#modified_area_popup').modal('show');
+            $('.body_data_chk').html(res.wrapper);
+            //console.log(res);
+        }
+    });
+});
+
+
+// $(document).on('click', '#mobile-menu-list-tab', function(e) {
+//     e.preventDefault();
+//     $("#all-user-grid").DataTable().ajax.reload();
+// });
+
+
+$(document).on('click', '#mobile-order-mgmt-tab', function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "category/get_wall_menu_data",
+            type: "post",
+            data: {
+               "menuFor": 1
+            },
+            success: function(resp) {
+                $('.mobile_menu_order_data').html(resp);
+                // / $('#feedback_modal').modal();
+                position_load();
+            }
+        })
+    })
+
+ $(document).ready(function() {
+        $('.dt-button').addClass('down_csv_btns');
+        $('.dt-button').html('<i class="fa fa-download me-1" aria-hidden="true"></i>');
+        // /$('#mobile-order-mgmt-tab').click();
+         if($("#mobile-order-mgmt-tab").hasClass('active')) {
+         //   alert('gfuyge')
+            $('#mobile-order-mgmt-tab').click();
+        }
+        
+
+    });
+    let Status = $('#statusDropdown2').val(); // Set initial value
+    // alert(Status);
+    $(document).on('change', '#statusDropdown2', function () { 
+    Status = $(this).val(); // Always keeps latest value
+});
+    // update data ajax
+    $(document).on('submit', '#editCategoryForm', function (e) {
+    e.preventDefault(); // Prevent default form submission
+
+    const form = document.getElementById('editCategoryForm');
+    const formData = new FormData(form); // Automatically collects all form inputs including fil
+    var id = $('#editCategoryId').val();
+    // const Status = $('#statusDropdown').val();  // Get selected value of status
+     formData.append('Status', Status);
+    $.ajax({
+        url: '/about/updateAbout'+ '/'+id, // Your controller endpoint
+        type: 'post',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            alert('Term us updated successfully!');
+            $('#modified_area_popup').modal('hide');
+            $('#all-user-grid').DataTable().ajax.reload();
+            // Optionally refresh table or update UI
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+            alert('Something went wrong while updating the blog.');
+        }
+    });
+});
+
+
+</script>
+
