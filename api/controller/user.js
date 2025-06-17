@@ -1,10 +1,11 @@
 // services/authService.js
-// const bcrypt = require('bcrypt');
+ const bcrypt = require('bcrypt');
 // const Ticket_Raise = require('../models/RaiseTicketModel'); // Ensure Sequelize model is defined correctly
 const  sequelize  = require('../models/connection'); // Export sequelize in connection.js
 const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
 const Ticket_Raise = require('../models/TicketModel'); // Ensure Sequelize model is defined correctly
+const User = require('../models/userModel'); // Ensure Sequelize model is defined correctly
 
 
 const raise_ticket = async (req, res) => {
@@ -98,7 +99,71 @@ const login = async (req, res) => {
 };
 
 
+const forgot_password = async (req, res) => {
+  try {
+    const { email, mobile, password } = req.body;
 
+    // Validate input
+    if (!email && !mobile) {
+      return res.status(400).json({
+        status: false,
+        message: 'Please provide either email or mobile number',
+      });
+    }
+
+    if (!password) {
+      return res.status(400).json({
+        status: false,
+        message: 'New password is required',
+      });
+    }
+
+    // Find the user by email or mobile
+    const user = await User.findOne({
+      where: {
+        [Op.or]: [
+          { email: email || null },
+          { mobile: mobile || null }
+        ]
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: 'User not found with given email or mobile number',
+      });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+   await User.update(
+  { password: hashedPassword },
+  {
+    where: {
+      [Op.or]: [
+        { email: email || null },
+        { mobile: mobile || null }
+      ]
+    }
+  }
+);
+
+    return res.status(200).json({
+      status: true,
+      message: 'Password updated successfully',
+    });
+
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({
+      status: false,
+      message: 'Something went wrong during password reset',
+    });
+  }
+};
 
 
 
@@ -107,6 +172,7 @@ const login = async (req, res) => {
 module.exports =
  { 
   raise_ticket,
-  login
+  login,
+  forgot_password
 
  };

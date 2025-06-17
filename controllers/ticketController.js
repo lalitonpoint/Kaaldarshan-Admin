@@ -177,36 +177,34 @@ async function get_all_ticket_ajax(req, res) {
     });
 
     const searchValue = requestData.search?.value || '';
-    const baseWhereClause = { Status: { [Op.ne]: 3 } };
+    const baseWhereClause = {
+  Status: { [Op.ne]: 3 },
+  sender: 'user'
+};
 
-    if (searchValue) {
-      baseWhereClause[Op.and] = [
-        { Status: { [Op.ne]: 3 } },
-        {
-          [Op.or]: [
-            { user_id: { [Op.like]: `%${searchValue}%` } },
-            { user_query: { [Op.like]: `%${searchValue}%` } }
-          ]
-        }
-      ];
+if (searchValue) {
+  baseWhereClause[Op.and] = [
+    {
+      Status: { [Op.ne]: 3 },
+      sender: 'user'
+    },
+    {
+      [Op.or]: [
+        { user_id: { [Op.like]: `%${searchValue}%` } },
+        { user_query: { [Op.like]: `%${searchValue}%` } }
+      ]
     }
+  ];
+}
 
     // Step 1: Get latest ticket per user
     const allLatestTickets = await Ticket.findAll({
-      where: baseWhereClause,
-      attributes: [
-        [sequelize.fn('MAX', sequelize.col('id')), 'id'],
-        'user_id',
-        [sequelize.fn('MAX', sequelize.col('user_query')), 'user_query'],
-        [sequelize.fn('MAX', sequelize.col('Query_status')), 'Query_status'],
-        [sequelize.fn('MAX', sequelize.col('Status')), 'Status'],
-        [sequelize.fn('MAX', sequelize.col('created_at')), 'latest_created_at']
-      ],
-      group: ['user_id'],
-      order: [[sequelize.fn('MAX', sequelize.col('id')), 'DESC']],
-      offset: start,
-      limit: length
-    });
+    where: baseWhereClause,
+    order: [['id', 'DESC']],
+    offset: start,
+    limit: length
+  });
+
 
     const data = allLatestTickets.map(row => {
       return [
