@@ -1,5 +1,5 @@
 // services/authService.js
-// const bcrypt = require('bcrypt');
+ const bcrypt = require('bcrypt');
 const User = require('../models/userModel'); // Ensure Sequelize model is defined correctly
 const  sequelize  = require('../models/connection'); // Export sequelize in connection.js
 const { Op } = require('sequelize');
@@ -13,8 +13,8 @@ const signup = async (req, res) => {
       const {name,email,mobile, password } = req.body; 
       let missingFields = [];
       if (!name) missingFields.push('name');
-      if (!email) missingFields.push('email');
-      if (!mobile) missingFields.push('mobile');
+      // if (!email) missingFields.push('email');
+      // if (!mobile) missingFields.push('mobile');
       if (!password) missingFields.push('password');
       if (missingFields.length > 0) {
         return res.status(400).json({
@@ -37,12 +37,12 @@ const signup = async (req, res) => {
           message: 'Email or mobile already exists'
         });
       }
-
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       name : String(name),
       mobile: String(mobile),
       email : String(email),
-      password: String(password),
+      password: hashedPassword,
       
     });
 
@@ -90,7 +90,8 @@ const login = async (req, res) => {
     }
 
     // 3. Match password (plain-text check, or use bcrypt if hashed)
-    if (user.password !== password) {
+   const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({
         status: false,
         message: 'Incorrect password',

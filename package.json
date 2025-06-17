@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bootstrap": "^5.3.3",
     "buffer-crc32": "^1.0.0",
     "cookie-parser": "^1.4.6",
