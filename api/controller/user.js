@@ -1,11 +1,14 @@
 // services/authService.js
  const bcrypt = require('bcrypt');
+ const { v4: uuidv4 } = require('uuid');
+
 // const Ticket_Raise = require('../models/RaiseTicketModel'); // Ensure Sequelize model is defined correctly
 const  sequelize  = require('../models/connection'); // Export sequelize in connection.js
 const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
 const Ticket_Raise = require('../models/TicketModel'); // Ensure Sequelize model is defined correctly
 const User = require('../models/userModel'); // Ensure Sequelize model is defined correctly
+const Order = require('../models/Order');
 
 
 const raise_ticket = async (req, res) => {
@@ -101,7 +104,7 @@ const login = async (req, res) => {
 
 const forgot_password = async (req, res) => {
   try {
-    const { email, mobile, password } = req.body;
+    const { email, mobile, newPassword } = req.body;
 
     // Validate input
     if (!email && !mobile) {
@@ -111,7 +114,7 @@ const forgot_password = async (req, res) => {
       });
     }
 
-    if (!password) {
+    if (!newPassword) {
       return res.status(400).json({
         status: false,
         message: 'New password is required',
@@ -165,14 +168,53 @@ const forgot_password = async (req, res) => {
   }
 };
 
+const intitiate_order = async (req, res) => {
+  try {
+    const { user_id,plan_id, plan_name, total_amount,plan_validity } = req.body;
 
+    // Basic validation
+    if (!user_id || !plan_name ||  plan_name.length === 0 || !total_amount || !plan_id || !plan_validity) {
+      return res.status(400).json({
+        status: false,
+        message: 'user_id, items, and total_amount are required',
+      });
+    }
 
+    await sequelize.sync(); 
+    // Create order in DB
+    const newOrder = await Order.create({
+      user_id: user_id,
+      order_id: uuidv4(), // Unique order ID
+      plan_id : plan_id,
+      plan_name: plan_name, // Store as JSON string if DB column is text
+      total_amount: parseFloat(total_amount),
+      plan_validity : plan_validity,
+      status: 'pending', // default status
+      created_at: new Date(),
+      updated_at: new Date()
+    });
 
+    return res.status(201).json({
+      status: true,
+      message: 'Order initiated successfully',
+      order: newOrder
+    });
+
+  } catch (error) {
+    console.error('Order initiation error:', error);
+    return res.status(500).json({
+      status: false,
+      message: 'Failed to initiate order',
+      error: error.message
+    });
+  }
+};
 
 module.exports =
  { 
   raise_ticket,
   login,
-  forgot_password
+  forgot_password,
+  intitiate_order
 
  };

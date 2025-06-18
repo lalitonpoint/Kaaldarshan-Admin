@@ -24,7 +24,8 @@
     "mysql2": "^3.11.3",
     "sequelize": "^6.37.3",
     "toastr": "^2.1.4",
-    "uid2": "^1.0.0"
+    "uid2": "^1.0.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
