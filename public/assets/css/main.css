@@ -155,13 +155,13 @@ main.main {
 --------------------------------------------------------------*/
 .header {
   color: var(--default-color);
-  background-color: var(--background-color);
+  background-color: #0d0d0d;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  padding: 0 15px;
-  width: 300px;
+  padding: 0 10px;
+  width: 250px;
   transition: all ease-in-out 0.3s;
   overflow-y: auto;
   z-index: 997;
@@ -216,11 +216,16 @@ main.main {
   background: var(--accent-color);
 }
 
+.profileTitllte h5 {
+    font-size: 13px;
+    margin-right: 7px;
+}
+
 @media (min-width: 1200px) {
 
   .header~main,
   .header~#footer {
-    margin-left: 300px;
+    margin-left: 250px;
   }
 }
 
@@ -277,10 +282,10 @@ main.main {
 
 .navmenu a,
 .navmenu a:focus {
-  color: var(--nav-color);
-  padding: 10px 10px;
+  color: #fbfbffc2;
+  padding: 7px 10px;
   font-family: var(--nav-font);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   display: flex;
   align-items: center;
@@ -292,8 +297,8 @@ main.main {
 
 .navmenu a .navicon,
 .navmenu a:focus .navicon {
-  font-size: 20px;
-  margin-right: 10px;
+  font-size: 16px;
+  margin-right: 5px;
 }
 
 .navmenu a .toggle-dropdown,
@@ -322,14 +327,14 @@ main.main {
 .navmenu .active,
 .navmenu .active:focus {
   color: var(--nav-hover-color);
-  background: #ed143d;
+  background: linear-gradient(81deg, #d2e9ff8c 0%, #323232 100%);
   border-radius: 6px;
 }
 
 .navmenu a:hover .navicon,
 .navmenu .active .navicon,
 .navmenu .active:focus .navicon {
-  color: var(--accent-color);
+  color: #fff;
 }
 
 .navmenu .active .toggle-dropdown,
@@ -1297,12 +1302,12 @@ section,
   padding: 20px;
 }
 .card {
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  text-align: center;
+    background-color: #eff5f7;
+    border: 1px solid #ddd;
+    border-radius: 30px 0px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgb(203 203 203);
+    text-align: center;
 }
 .card h2 {
   margin: 0;
@@ -1313,4 +1318,24 @@ section,
   font-size: 28px;
   margin-top: 10px;
   color: #007BFF;
+  font-weight: 700;
+  font-family: cursive;
+  margin-bottom: 0;
+}
+
+.dashbord {
+  padding: 15px;
+  box-shadow: 0px 0px 10px 0px #9f9797;
+}
+
+.dashbord p{
+  font-size: 20px;
+}
+
+.dashbord p {
+    font-size: 20px;
+    font-family: cursive;
+    border-bottom: 1px solid #000;
+    border-width: medium;
+    width: fit-content;
 }

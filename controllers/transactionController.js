@@ -53,102 +53,104 @@ const orders = require('../api/models/Order');
         }
     }
 
-    async function get_all_order_ajax(req, res) {
-    const requestData = req.body || {};
+ const get_all_order_ajax = async (req, res) => {
+  const requestData = req.body || {};
+  const start = parseInt(requestData.start) || 0;
+  const length = parseInt(requestData.length) || 10;
+  const searchValue = requestData.search?.value || '';
 
-    const start = parseInt(requestData.start) || 0;
-    const length = parseInt(requestData.length) || 10;
-    const searchValue = requestData.search?.value || '';
+  try {
+    // Total count without filters
+    const totalCount = await orders.count({
+      where: { Status: { [Op.ne]: 3 } }
+    });
 
-    try {
-        // Total count without filters
-        const totalCount = await orders.count({
-            where: { Status: { [Op.ne]: 3 } }
-        });
+    // Filtering setup
+    const whereClause = {
+      Status: { [Op.ne]: 3 }
+    };
 
-        // Setup filtering conditions
-        const whereClause = {
-            Status: { [Op.ne]: 3 }
-        };
+    const userWhere = {};
 
-        const userWhere = {};
+    if (searchValue) {
+      whereClause[Op.or] = [
+        { plan_name: { [Op.like]: `%${searchValue}%` } },
+        
+        { order_id: { [Op.like]: `%${searchValue}%` } },
+        { plan_validity: { [Op.like]: `%${searchValue}%` } },
+        { total_amount: { [Op.like]: `%${searchValue}%` } },
+        { status: { [Op.like]: `%${searchValue}%` } }
+      ];
 
-        if (searchValue) {
-            whereClause[Op.or] = [
-                { plan_name: { [Op.like]: `%${searchValue}%` } },
-                { order_id: { [Op.like]: `%${searchValue}%` } },
-                { plan_validity: { [Op.like]: `%${searchValue}%` } },
-                { total_amount: { [Op.like]: `%${searchValue}%` } },
-                { status: { [Op.like]: `%${searchValue}%` } }
-            ];
-
-            userWhere[Op.or] = [
-                { name: { [Op.like]: `%${searchValue}%` } },
-                { mobile: { [Op.like]: `%${searchValue}%` } }
-            ];
-        }
-
-        // Filtered count (with user search conditions)
-        const filteredCount = await orders.count({
-            where: whereClause,
-            include: [
-                {
-                    model: User,
-                    where: Object.keys(userWhere).length ? userWhere : undefined
-                }
-            ]
-        });
-
-        // Fetch filtered paginated data
-        const user = await orders.findAll({
-            where: whereClause,
-            include: [
-                {
-                    model: User,
-                    attributes: ['id', 'name', 'mobile'],
-                    where: Object.keys(userWhere).length ? userWhere : undefined
-                }
-            ],
-            order: [['id', 'DESC']],
-            offset: start,
-            limit: length
-        });
-
-        // Format for DataTables
-        const data = user.map(row => {
-            return [
-                row.id,
-                row.User?.name || '',
-                row.User?.mobile || '',
-                row.plan_name,
-                row.total_amount,
-                row.plan_validity,
-                row.order_id,
-                row.status === 'completed'
-                    ? `<span style="color: green; font-weight: bold;"><i class="fa fa-check-circle"></i> Complete</span>`
-                    : row.status === 'pending'
-                        ? `<span style="color: orange; font-weight: bold;"><i class="fa fa-clock-o"></i> Pending</span>`
-                        : `<span style="color: red; font-weight: bold;"><i class="fa fa-times-circle"></i> Failed</span>`,
-                row.createdAt
-            ];
-        });
-
-        // Send DataTables response
-        res.json({
-            draw: requestData.draw || 1,
-            recordsTotal: totalCount,
-            recordsFiltered: filteredCount,
-            data: data
-        });
-
-    } catch (err) {
-        console.error('Database error:', err);
-        res.status(500).json({
-            status: false,
-            message: 'Database error occurred.'
-        });
+    //   userWhere[Op.or] = [
+    //     { name: { [Op.like]: `%${searchValue}%` } },
+    //     { mobile: { [Op.like]: `%${searchValue}%` } }
+    //   ];
     }
-}
+
+    // Filtered count with proper JOIN
+    const filteredCount = await orders.count({
+      where: whereClause,
+      include: [
+        {
+          model: User,
+         attributes: ['id', 'name', 'mobile'],
+          required: Object.keys(userWhere).length > 0,
+          where: Object.keys(userWhere).length ? userWhere : undefined
+        }
+      ],
+      distinct: true
+    });
+
+    // Fetch paginated + filtered data
+    const orderList = await orders.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'name', 'mobile'],
+          required: Object.keys(userWhere).length > 0,
+          where: Object.keys(userWhere).length ? userWhere : undefined
+        }
+      ],
+      order: [['id', 'DESC']],
+      offset: start,
+      limit: length
+    });
+
+    // Format for DataTables
+    const data = orderList.map(row => [
+      row.id,
+      row.User?.name || '',
+      row.User?.mobile || '',
+      row.plan_name,
+      row.total_amount,
+      row.plan_validity,
+      row.order_id,
+      row.status === 'completed'
+        ? `<span style="color: green; font-weight: bold;"><i class="fa fa-check-circle"></i> Complete</span>`
+        : row.status === 'pending'
+          ? `<span style="color: orange; font-weight: bold;"><i class="fa fa-clock-o"></i> Pending</span>`
+          : `<span style="color: red; font-weight: bold;"><i class="fa fa-times-circle"></i> Failed</span>`,
+      row.createdAt
+    ]);
+
+    // Final response
+    res.json({
+      draw: requestData.draw || 1,
+      recordsTotal: totalCount,
+      recordsFiltered: filteredCount,
+      data
+    });
+
+  } catch (err) {
+    console.error('Database error:', err);
+    res.status(500).json({
+      status: false,
+      message: 'Database error occurred.'
+    });
+  }
+};
 
 
 
