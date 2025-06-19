@@ -14,6 +14,11 @@ const Order = sequelize.define('Order', {
     allowNull: false,
     unique: true
   },
+  pre_transaction_id: {
+    type: DataTypes.STRING, // You can also use UUID, but STRING is fine for uuidv4()
+    allowNull: false
+   
+  },
 
   user_id: {
     type: DataTypes.INTEGER,

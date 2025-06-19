@@ -1,6 +1,9 @@
 // services/authService.js
+
  const bcrypt = require('bcrypt');
  const { v4: uuidv4 } = require('uuid');
+ require('dotenv').config();
+ const Razorpay = require('razorpay');
 
 // const Ticket_Raise = require('../models/RaiseTicketModel'); // Ensure Sequelize model is defined correctly
 const  sequelize  = require('../models/connection'); // Export sequelize in connection.js
@@ -9,7 +12,10 @@ const jwt = require('jsonwebtoken');
 const Ticket_Raise = require('../models/TicketModel'); // Ensure Sequelize model is defined correctly
 const User = require('../models/userModel'); // Ensure Sequelize model is defined correctly
 const Order = require('../models/Order');
-
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+})
 
 const raise_ticket = async (req, res) => {
   try {
@@ -180,24 +186,40 @@ const intitiate_order = async (req, res) => {
       });
     }
 
-    await sequelize.sync(); 
-    // Create order in DB
-    const newOrder = await Order.create({
-      user_id: user_id,
-      order_id: uuidv4(), // Unique order ID
-      plan_id : plan_id,
-      plan_name: plan_name, // Store as JSON string if DB column is text
-      total_amount: parseFloat(total_amount),
-      plan_validity : plan_validity,
-      status: 'pending', // default status
-      created_at: new Date(),
-      updated_at: new Date()
+      await sequelize.sync(); 
+
+
+      const razorpayOrder = await razorpay.orders.create({
+      amount: Math.round(parseFloat(total_amount) * 100), // in paise
+      currency: 'INR',
+      receipt: `rcpt_${Date.now()}`, // <= VALID RECEIPT STRING
+      payment_capture: 1,
     });
 
-    return res.status(201).json({
+    console.log("avcgswvdcghewd",razorpayOrder.id)
+    // Create order in DB
+     const newOrder = await Order.create({
+      user_id: user_id,
+      order_id: uuidv4(), // internal order id
+      plan_id: plan_id,
+      plan_name: plan_name,
+      total_amount: parseFloat(total_amount),
+      plan_validity: plan_validity,
+      pre_transaction_id: razorpayOrder.id, // <-- save Razorpay order ID
+      status: 'pending',
+      created_at: new Date(),
+      updated_at: new Date(),
+    });
+
+     return res.status(201).json({
       status: true,
       message: 'Order initiated successfully',
-      order: newOrder
+      order: newOrder,
+      razorpay: {
+        order_id: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+      }
     });
 
   } catch (error) {
