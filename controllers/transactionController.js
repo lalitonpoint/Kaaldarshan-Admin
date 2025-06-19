@@ -12,17 +12,18 @@ const express = require('express');
 const app = express();
 app.use(express.json()); // For parsing application/json
 app.use(express.urlencoded({ extended: true })); // For parsing form data
+const User = require('../api/models/userModel')
 const Plan = require('../models/Subscription')
 const orders = require('../api/models/Order');
 
 
 
 
-app.use((req, res, next) => {
-    console.log('Request Headers:', req.headers);
-    console.log('Request Body:', req.body);
-    next();
-});
+        app.use((req, res, next) => {
+            console.log('Request Headers:', req.headers);
+            console.log('Request Body:', req.body);
+            next();
+        });
 
 
     async function add_plan_ajax(req, res) {
@@ -52,80 +53,92 @@ app.use((req, res, next) => {
         }
     }
 
+    async function get_all_order_ajax(req, res) {
+    const requestData = req.body || {};
 
-
-async function get_all_order_ajax(req, res) {
-    const requestData = req.body || {}; 
-
-    // Safely access properties with defaults
-    const start = parseInt(requestData.start) || 0; // Default to 0
-    const length = parseInt(requestData.length) || 10; // Default to 10
+    const start = parseInt(requestData.start) || 0;
+    const length = parseInt(requestData.length) || 10;
+    const searchValue = requestData.search?.value || '';
 
     try {
-        // Get total count of records
+        // Total count without filters
         const totalCount = await orders.count({
             where: { Status: { [Op.ne]: 3 } }
         });
 
-        const searchValue = requestData.search?.value || '';
+        // Setup filtering conditions
         const whereClause = {
             Status: { [Op.ne]: 3 }
         };
 
+        const userWhere = {};
+
         if (searchValue) {
-            whereClause[Op.and] = [
-                { Status: { [Op.ne]: 3 } },
-                {
-                    [Op.or]: [
-                        { plan_name: { [Op.like]: `%${searchValue}%` } },
-                        { plan_amount: { [Op.like]: `%${searchValue}%` } },
-                        { plan_validity: { [Op.like]: `%${searchValue}%` } },
-                         { total_amount: { [Op.like]: `%${searchValue}%` } },
-                        { status: { [Op.like]: `%${searchValue}%` } }
-                    ]
-                }
+            whereClause[Op.or] = [
+                { plan_name: { [Op.like]: `%${searchValue}%` } },
+                { order_id: { [Op.like]: `%${searchValue}%` } },
+                { plan_validity: { [Op.like]: `%${searchValue}%` } },
+                { total_amount: { [Op.like]: `%${searchValue}%` } },
+                { status: { [Op.like]: `%${searchValue}%` } }
+            ];
+
+            userWhere[Op.or] = [
+                { name: { [Op.like]: `%${searchValue}%` } },
+                { mobile: { [Op.like]: `%${searchValue}%` } }
             ];
         }
-    
-        // Get filtered count using the whereClause
-        const filteredCount = await orders.count({ where: whereClause });
 
-        // Get filtered data
+        // Filtered count (with user search conditions)
+        const filteredCount = await orders.count({
+            where: whereClause,
+            include: [
+                {
+                    model: User,
+                    where: Object.keys(userWhere).length ? userWhere : undefined
+                }
+            ]
+        });
+
+        // Fetch filtered paginated data
         const user = await orders.findAll({
             where: whereClause,
-            
+            include: [
+                {
+                    model: User,
+                    attributes: ['id', 'name', 'mobile'],
+                    where: Object.keys(userWhere).length ? userWhere : undefined
+                }
+            ],
             order: [['id', 'DESC']],
             offset: start,
-            limit: length,
+            limit: length
         });
-        
 
-        // Format the data for DataTables
-        const data = user.map(row => { 
+        // Format for DataTables
+        const data = user.map(row => {
             return [
                 row.id,
-                row.plan_name, // Column 1
+                row.User?.name || '',
+                row.User?.mobile || '',
+                row.plan_name,
                 row.total_amount,
                 row.plan_validity,
-                 row.order_id,
-                // row.user?.name || row.TrnBy, // Column 3 (use TrnBy if name is not available)
-                // row.TrnOn, // Column 4
-                 row.status === 'completed'
-            ? `<span style="color: green; font-weight: bold;"><i class="fa fa-check-circle"></i> Complete</span>`
-            : row.status === 'pending'
-                ? `<span style="color: orange; font-weight: bold;"><i class="fa fa-clock-o"></i> Pending</span>`
-                : `<span style="color: red; font-weight: bold;"><i class="fa fa-times-circle"></i> Failed</span>`,
-                row.createdAt,
+                row.order_id,
+                row.status === 'completed'
+                    ? `<span style="color: green; font-weight: bold;"><i class="fa fa-check-circle"></i> Complete</span>`
+                    : row.status === 'pending'
+                        ? `<span style="color: orange; font-weight: bold;"><i class="fa fa-clock-o"></i> Pending</span>`
+                        : `<span style="color: red; font-weight: bold;"><i class="fa fa-times-circle"></i> Failed</span>`,
+                row.createdAt
+            ];
+        });
 
-                        ];
-                    });
-
-        // Return JSON response
+        // Send DataTables response
         res.json({
-            draw: requestData.draw, // Provide default draw value
+            draw: requestData.draw || 1,
             recordsTotal: totalCount,
-            recordsFiltered: filteredCount, // Use the filteredCount for recordsFiltered
-            data: data // Ensure 'data' is an array of arrays
+            recordsFiltered: filteredCount,
+            data: data
         });
 
     } catch (err) {
@@ -136,6 +149,9 @@ async function get_all_order_ajax(req, res) {
         });
     }
 }
+
+
+
 async function edit_subscription (req, res){
     try {
         const subscription_id = req.params.id;

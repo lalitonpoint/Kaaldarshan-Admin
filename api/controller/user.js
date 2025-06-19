@@ -200,7 +200,7 @@ const intitiate_order = async (req, res) => {
     // Create order in DB
      const newOrder = await Order.create({
       user_id: user_id,
-      order_id: uuidv4(), // internal order id
+     order_id : '3DAstro_' + uuidv4(),
       plan_id: plan_id,
       plan_name: plan_name,
       total_amount: parseFloat(total_amount),

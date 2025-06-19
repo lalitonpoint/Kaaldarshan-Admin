@@ -1,7 +1,7 @@
 // models/Order.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../models/connection'); // Assuming connection is your sequelize instance
-
+const User = require('./userModel'); // Make sure this is added
 const Order = sequelize.define('Order', {
   id: {
     type: DataTypes.INTEGER,
@@ -52,5 +52,6 @@ const Order = sequelize.define('Order', {
   tableName: 'orders',
   timestamps: true // createdAt and updatedAt will be handled automatically
 });
+Order.belongsTo(User, { foreignKey: 'user_id' });
 
 module.exports = Order;
