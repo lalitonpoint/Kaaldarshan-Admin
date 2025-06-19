@@ -196,7 +196,7 @@ const intitiate_order = async (req, res) => {
       payment_capture: 1,
     });
 
-    console.log("avcgswvdcghewd",razorpayOrder.id)
+   
     // Create order in DB
      const newOrder = await Order.create({
       user_id: user_id,
