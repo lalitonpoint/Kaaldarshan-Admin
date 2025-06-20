@@ -340,7 +340,7 @@ async function get_wall_menu_data(req, res) {
 
             html += `
                 <div class="row mt-3">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <p class="mb-0 hamburger_para">Category Position List</p>
             `;
 
