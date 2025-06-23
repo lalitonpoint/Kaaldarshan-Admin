@@ -4,7 +4,7 @@
  const { v4: uuidv4 } = require('uuid');
  require('dotenv').config();
  const Razorpay = require('razorpay');
-
+const axios = require('axios');
 // const Ticket_Raise = require('../models/RaiseTicketModel'); // Ensure Sequelize model is defined correctly
 const  sequelize  = require('../models/connection'); // Export sequelize in connection.js
 const { Op } = require('sequelize');
@@ -232,11 +232,65 @@ const intitiate_order = async (req, res) => {
   }
 };
 
+
+
+
+// const axios = require('axios');
+
+const model_data = async (req, res) => {
+  try {
+    const { dob, tob, selectedLanguage } = req.body;
+
+    // Basic validation (optional but recommended)
+    if (!dob || !tob || !selectedLanguage) {
+      return res.status(400).json({
+        status: false,
+        message: 'dob, tob, and selectedLanguage are required'
+      });
+    }
+
+    const apiPayload = {
+      api_key: '736be299-3c63-5496-9c72-111cb2fe5359',
+      dob: dob,             // Format: "07/06/2028"
+      tob: tob,             // Format: "11:38"
+      lat: '1',
+      lon: '1',
+      tz: 5.5,
+      lang: selectedLanguage
+    };
+
+    const response = await axios.get(
+      'https://api.vedicastroapi.com/v3-json/horoscope/planet-details',
+      { params: apiPayload }
+    );
+
+    // Send API response back to client
+    return res.status(200).json({
+      status: true,
+      message: 'API data fetched successfully',
+      data: response.data
+    });
+
+  } catch (error) {
+    console.error('API call error:', error.message);
+    return res.status(500).json({
+      status: false,
+      message: 'Failed to fetch data from external API',
+      error: error.message
+    });
+  }
+};
+
+
+
+
+
 module.exports =
  { 
   raise_ticket,
   login,
   forgot_password,
-  intitiate_order
+  intitiate_order,
+  model_data
 
  };
