@@ -12,10 +12,13 @@ const jwt = require('jsonwebtoken');
 const Ticket_Raise = require('../models/TicketModel'); // Ensure Sequelize model is defined correctly
 const User = require('../models/userModel'); // Ensure Sequelize model is defined correctly
 const Order = require('../models/Order');
+const ApiData = require('../models/apiData');
+const api_key = process.env.API_KEY_VEDIC;
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 })
+
 
 const raise_ticket = async (req, res) => {
   try {
@@ -223,7 +226,7 @@ const intitiate_order = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Order initiation error:', error);
+    // console.error('Order initiation error:', error);
     return res.status(500).json({
       status: false,
       message: 'Failed to initiate order',
@@ -235,7 +238,7 @@ const intitiate_order = async (req, res) => {
 
 
 
-// const axios = require('axios');
+
 
 const model_data = async (req, res) => {
   try {
@@ -250,7 +253,7 @@ const model_data = async (req, res) => {
     }
 
     const apiPayload = {
-      api_key: '736be299-3c63-5496-9c72-111cb2fe5359',
+      api_key: api_key,
       dob: dob,             // Format: "07/06/2028"
       tob: tob,             // Format: "11:38"
       lat: '1',
@@ -263,6 +266,25 @@ const model_data = async (req, res) => {
       'https://api.vedicastroapi.com/v3-json/horoscope/planet-details',
       { params: apiPayload }
     );
+
+ 
+    await sequelize.sync();
+    const existing = await ApiData.findOne({ order: [['id', 'ASC']] });
+    const remainingCalls = response.data?.remaining_api_calls || 0;
+
+        if (existing) {
+      // Row exists → update it
+      await existing.update({
+        remaining_api_calls: remainingCalls,
+        called_at: new Date()
+      });
+    } else {
+      // No entry yet → create one
+      await ApiData.create({
+        remaining_api_calls: remainingCalls,
+        called_at: new Date()
+      });
+    }
 
     // Send API response back to client
     return res.status(200).json({
