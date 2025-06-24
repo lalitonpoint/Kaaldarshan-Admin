@@ -15,7 +15,7 @@
     </div>
     <div class="card">
       <h2>Total Subscriptions</h2>
-      <p>567</p>
+       <p id="totalsubscription"></p>
     </div>
     <div class="card">
       <h2>Total Categories</h2>
@@ -23,8 +23,8 @@
     </div>
     
     <div class="card">
-      <h2>Total API Usage</h2>
-      <p>9,876</p>
+      <h2>Remaining APi Calls</h2>
+       <p id="totalApiUsage"></p>
     </div>
   </div>
 </body>
@@ -44,10 +44,12 @@ jQuery(document).ready(function() {
 
       const total_category = response.data.total_category;
       const totalUsers = response.data.total_user;
+      const Remaining_api_count = response.data.Remaining_api;
+      const totalsubscription = response.data.totalsubscription;
       $('#totalUsers').text(totalUsers);
-      $('#totalSubscriptions').text(response.totalSubscriptions);
+      $('#totalsubscription').text(totalsubscription);
       $('#totalCategories').text(total_category);
-      $('#totalApiUsage').text(response.totalApiUsage);
+      $('#totalApiUsage').text(Remaining_api_count);
     },
     error: function(xhr, status, error) {
       console.error('Error fetching dashboard metrics:', error);

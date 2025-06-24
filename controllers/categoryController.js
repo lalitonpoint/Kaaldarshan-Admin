@@ -14,6 +14,8 @@ app.use(express.json()); // For parsing application/json
 app.use(express.urlencoded({ extended: true })); // For parsing form data
 const Category = require('../models/Category');
 const User = require('../models/User');
+const Api_remaining = require('../api/models/apiData');
+const totalsubscriptions = require('../api/models/Order');
 
 
 // Define associations
@@ -405,10 +407,15 @@ async function dashboard_details_data(req, res) {
     try {
       const totalCategories = await Category.count();
       const totaluser = await User.count();
+      const apiEntry = await Api_remaining.findOne({ order: [['id', 'ASC']] });
+     const Remaining_api = apiEntry ? apiEntry.remaining_api_calls : 0;
+     const totalsubscription = await totalsubscriptions.count();
       res.json({
         data: {
           total_category : totalCategories,
-          total_user : totaluser
+          total_user : totaluser,
+          Remaining_api : Remaining_api,
+          totalsubscription : totalsubscription
         }
       });
       
