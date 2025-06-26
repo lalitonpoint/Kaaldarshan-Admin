@@ -33,6 +33,11 @@ const Order = sequelize.define('Order', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
+
+   api_hits: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
   plan_name: {
     type: DataTypes.TEXT, // store JSON string of item array
     allowNull: false

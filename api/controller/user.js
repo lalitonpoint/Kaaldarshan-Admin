@@ -179,7 +179,7 @@ const forgot_password = async (req, res) => {
 
 const intitiate_order = async (req, res) => {
   try {
-    const { user_id,plan_id, plan_name, total_amount,plan_validity } = req.body;
+    const { user_id,plan_id, plan_name, total_amount,plan_validity,api_hits } = req.body;
 
     // Basic validation
     if (!user_id || !plan_name ||  plan_name.length === 0 || !total_amount || !plan_id || !plan_validity) {
@@ -208,6 +208,7 @@ const intitiate_order = async (req, res) => {
       plan_name: plan_name,
       total_amount: parseFloat(total_amount),
       plan_validity: plan_validity,
+      api_hits: api_hits,
       pre_transaction_id: razorpayOrder.id, // <-- save Razorpay order ID
       status: 'pending',
       created_at: new Date(),
@@ -217,7 +218,7 @@ const intitiate_order = async (req, res) => {
      return res.status(201).json({
       status: true,
       message: 'Order initiated successfully',
-      order: newOrder,
+      // order: newOrder,
       razorpay: {
         order_id: razorpayOrder.id,
         amount: razorpayOrder.amount,

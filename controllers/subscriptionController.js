@@ -31,7 +31,7 @@ app.use((req, res, next) => {
         try {
 
             console.log('Request Body:', req.body);
-            const { plan_name, plan_amount, plan_validity,plan_feature, Status } = req.body;
+            const { plan_name, plan_amount, plan_validity,api_hits,plan_feature, Status } = req.body;
     
             // Validate required fields
             if (!plan_validity || !plan_name || Status === undefined) {
@@ -43,6 +43,7 @@ app.use((req, res, next) => {
                 plan_name : plan_name,
                 plan_amount : plan_amount,
                 plan_validity : plan_validity,
+                api_hits : api_hits,
                 plan_feature : plan_feature,
                 Status
             });

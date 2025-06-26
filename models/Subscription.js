@@ -22,6 +22,10 @@ const plan_management = sequelize.define('plan_management', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+     api_hits: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     plan_feature: {
         type: DataTypes.STRING,
         allowNull: false,
