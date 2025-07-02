@@ -322,7 +322,7 @@ module.exports =
   login,
   forgot_password,
   intitiate_order,
-  aws_billing_details,
+
   model_data
 
  };

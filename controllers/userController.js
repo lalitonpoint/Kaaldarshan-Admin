@@ -15,7 +15,8 @@ app.use(express.urlencoded({ extended: true })); // For parsing form data
 const Category = require('../models/Category');
 const Backend_User = require('../models/User');
 const User = require('../api/models/userModel');
-const { CostExplorerClient, GetCostAndUsageCommand, GetCostForecastCommand } = require("@aws-sdk/client-cost-explorer");
+const awsbilling  = require('../models/aws_billings_details');
+const { CostExplorerClient, GetCostAndUsageCommand } = require("@aws-sdk/client-cost-explorer");
 
 const ACESS_KEY = process.env.ACESS_KEY_AWS;
 const key_secret = process.env.SECRET_KEY_AWS;
@@ -267,13 +268,11 @@ const aws_billing_details = async (req, res) => {
         secretAccessKey: key_secret, // Replac
       },
     });
+    const st_date = req.body.startDate ;
+    const en_date = req.body.endDate; 
+    const startDate = st_date;
+    const endDate = en_date;
 
-    const startDate = "2025-06-01";
-    const endDate = "2025-07-01";
-
-
-    const forecastStart = "2025-07-02";
-const forecastEnd = "2025-07-31";
     // 1. Daily Cost
    const dailyCommand = new GetCostAndUsageCommand({
   TimePeriod: { Start: startDate, End: endDate },
@@ -297,17 +296,6 @@ const forecastEnd = "2025-07-31";
     const totalResponse = await client.send(totalCommand);
     const totalCost = totalResponse.ResultsByTime[0].Total.UnblendedCost;
 
-    // 3. Forecast
-    // 3. Forecast
-        const forecastCommand = new GetCostForecastCommand({
-        TimePeriod: { Start: forecastStart, End: forecastEnd },
-        Granularity: "MONTHLY",
-        Metric: "UNBLENDED_COST"
-        });
-
-    const forecastResponse = await client.send(forecastCommand);
-    const forecast = forecastResponse.Total;
-
     // 4. Service-wise Breakdown
         const serviceCommand = new GetCostAndUsageCommand({
         TimePeriod: { Start: startDate, End: endDate },
@@ -315,19 +303,47 @@ const forecastEnd = "2025-07-31";
         Metrics: ["UnblendedCost"],
         GroupBy: [{ Type: "DIMENSION", Key: "SERVICE" }]
         });
-    const serviceResponse = await client.send(serviceCommand);
-    const serviceData = serviceResponse.ResultsByTime[0].Groups.map(group => ({
+        const serviceResponse = await client.send(serviceCommand);
+        const serviceData = serviceResponse.ResultsByTime[0].Groups.map(group => ({
       service: group.Keys[0],
       amount: group.Metrics.UnblendedCost.Amount,
       unit: group.Metrics.UnblendedCost.Unit
     }));
 
+     await sequelize.sync(); 
+     const existingRecord = await awsbilling.findOne({
+      order: [['createdAt', 'DESC']]
+    });
+  
+
+    if (existingRecord) {
+      // Update the latest existing record
+      await awsbilling.update({
+        start_date: startDate,
+        end_date: endDate,
+        total_cost: totalCost,
+        service_breakdown: serviceData,
+        daily_breakdown: dailyData
+      }, {
+        where: { id: existingRecord.id }
+      });
+    } else {
+      // Insert new if no records exist
+      await awsbilling.create({
+        start_date: startDate,
+        end_date: endDate,
+        total_cost: totalCost,
+        service_breakdown: serviceData,
+        daily_breakdown: dailyData
+      });
+    }
+
+
     // 5. Combine response
     res.status(200).json({
       success: true,
       message: "AWS Billing details fetched successfully",
-      totalCost,
-      forecast,
+      totalCost, 
       serviceBreakdown: serviceData,
       dailyBreakdown: dailyData
     });
@@ -342,6 +358,49 @@ const forecastEnd = "2025-07-31";
   }
 };
 
+const get_aws_billing_data_from_db = async (req, res) => {
+  try {
+    const record = await awsbilling.findOne({
+      order: [['createdAt', 'DESC']]
+    });
+
+    if (!record) {
+      return res.status(404).json({
+        success: false,
+        message: "No billing data found in database."
+      });
+    }
+
+    // Parse JSON strings to objects
+    const parsedTotalCost = JSON.parse(record.total_cost);
+    const parsedServiceBreakdown = JSON.parse(record.service_breakdown);
+    const parsedDailyBreakdown = JSON.parse(record.daily_breakdown);
+    const start_date = record.start_date;
+    const end_date  = record.end_date;
+
+    res.status(200).json({
+      success: true,
+      message: "AWS Billing data fetched from database successfully.",
+      totalCost: parsedTotalCost,
+      start_date,
+      end_date,
+      serviceBreakdown: parsedServiceBreakdown,
+      dailyBreakdown: parsedDailyBreakdown
+    });
+
+  } catch (error) {
+    console.error("Error retrieving AWS billing data from DB:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch billing data from database.",
+      error: error.message
+    });
+  }
+};
+
+
+
+
 
 
 
@@ -354,6 +413,7 @@ module.exports = {
     status_change,
     updateUser,
     aws_billing_details,
+    get_aws_billing_data_from_db,
     add_user_ajax
    
 };
