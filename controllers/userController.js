@@ -15,6 +15,8 @@ app.use(express.urlencoded({ extended: true })); // For parsing form data
 const Category = require('../models/Category');
 const Backend_User = require('../models/User');
 const User = require('../api/models/userModel');
+const { CostExplorerClient, GetCostAndUsageCommand, GetCostForecastCommand } = require("@aws-sdk/client-cost-explorer");
+
 
 
 
@@ -249,7 +251,95 @@ async function updateUser(req, res) {
         console.error("Unexpected error:", error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
+
 }
+
+
+const aws_billing_details = async (req, res) => {
+  try {
+    const client = new CostExplorerClient({
+      region: "us-east-1",
+      credentials: {
+        accessKeyId: "AKIA4RCAOP57D6QHDEQL",     // Replace with your actual access key
+        secretAccessKey: "Tb9mmOOJipLTy7wWQQkJonEIs1t1gStwUgMAJsQB", // Replac
+      },
+    });
+
+    const startDate = "2025-06-01";
+    const endDate = "2025-07-01";
+
+
+    const forecastStart = "2025-07-02";
+const forecastEnd = "2025-07-31";
+    // 1. Daily Cost
+   const dailyCommand = new GetCostAndUsageCommand({
+  TimePeriod: { Start: startDate, End: endDate },
+  Granularity: "DAILY",
+  Metrics: ["UnblendedCost"]
+})
+    const dailyResponse = await client.send(dailyCommand);
+
+    const dailyData = dailyResponse.ResultsByTime.map(entry => ({
+      date: entry.TimePeriod.Start,
+      amount: entry.Total.UnblendedCost.Amount,
+      unit: entry.Total.UnblendedCost.Unit,
+    }));
+
+    // 2. Monthly Total
+    const totalCommand = new GetCostAndUsageCommand({
+  TimePeriod: { Start: startDate, End: endDate },
+  Granularity: "MONTHLY",
+  Metrics: ["UnblendedCost"]
+});
+    const totalResponse = await client.send(totalCommand);
+    const totalCost = totalResponse.ResultsByTime[0].Total.UnblendedCost;
+
+    // 3. Forecast
+    // 3. Forecast
+const forecastCommand = new GetCostForecastCommand({
+  TimePeriod: { Start: forecastStart, End: forecastEnd },
+  Granularity: "MONTHLY",
+  Metric: "UNBLENDED_COST"
+});
+
+    const forecastResponse = await client.send(forecastCommand);
+    const forecast = forecastResponse.Total;
+
+    // 4. Service-wise Breakdown
+  const serviceCommand = new GetCostAndUsageCommand({
+  TimePeriod: { Start: startDate, End: endDate },
+  Granularity: "MONTHLY",
+  Metrics: ["UnblendedCost"],
+  GroupBy: [{ Type: "DIMENSION", Key: "SERVICE" }]
+});
+    const serviceResponse = await client.send(serviceCommand);
+    const serviceData = serviceResponse.ResultsByTime[0].Groups.map(group => ({
+      service: group.Keys[0],
+      amount: group.Metrics.UnblendedCost.Amount,
+      unit: group.Metrics.UnblendedCost.Unit
+    }));
+
+    // 5. Combine response
+    res.status(200).json({
+      success: true,
+      message: "AWS Billing details fetched successfully",
+      totalCost,
+      forecast,
+      serviceBreakdown: serviceData,
+      dailyBreakdown: dailyData
+    });
+
+  } catch (error) {
+    console.error("Error fetching billing details:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch AWS billing details",
+      error: error.message,
+    });
+  }
+};
+
+
 
 
 
@@ -260,6 +350,7 @@ module.exports = {
     edit_user,
     status_change,
     updateUser,
+    aws_billing_details,
     add_user_ajax
    
 };

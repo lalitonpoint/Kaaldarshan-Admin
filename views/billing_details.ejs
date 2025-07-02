@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AWS Billing Panel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 30px;
+    }
+    .btn {
+      background: #2c7be5;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .card {
+      background: #fff;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h2, h3 {
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background: #333;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>AWS Billing Dashboard</h2>
+  <button class="btn" onclick="fetchBillingData()">Show Billing Details</button>
+
+  <div id="billingContent" style="display:none;">
+    <div class="card">
+      <h3>Summary</h3>
+      <p><strong>Total Cost:</strong> <span id="totalCost">-</span></p>
+      <p><strong>Forecast:</strong> <span id="forecast">-</span></p>
+      <p><strong>Paid:</strong> <span id="paidAmount">-</span></p>
+      <p><strong>Remaining:</strong> <span id="remainingAmount">-</span></p>
+    </div>
+
+    <div class="card">
+      <h3>Service-wise Breakdown</h3>
+      <table id="serviceTable">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Amount (USD)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Daily Usage</h3>
+      <table id="dailyTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount (USD)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+ <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script>
+  function fetchBillingData() {
+    $.ajax({
+      url:  "user/billing_details/",
+      method: "post",
+      success: function (data) {
+        if (data.success) {
+          $('#billingContent').show();
+
+          $('#totalCost').text(`$${parseFloat(data.totalCost.Amount).toFixed(2)} USD`);
+          $('#forecast').text(`$${parseFloat(data.forecast.Amount).toFixed(2)} USD`);
+          $('#paidAmount').text(data.paidAmount ? `$${parseFloat(data.paidAmount.amount).toFixed(2)} USD` : 'N/A');
+          $('#remainingAmount').text(data.remainingAmount ? `$${parseFloat(data.remainingAmount.amount).toFixed(2)} USD` : 'N/A');
+
+          const $serviceTbody = $("#serviceTable tbody").empty();
+          data.serviceBreakdown.forEach(item => {
+            $serviceTbody.append(`<tr><td>${item.service}</td><td>$${parseFloat(item.amount).toFixed(2)}</td></tr>`);
+          });
+
+          const $dailyTbody = $("#dailyTable tbody").empty();
+          data.dailyBreakdown.forEach(day => {
+            $dailyTbody.append(`<tr><td>${day.date}</td><td>$${parseFloat(day.amount).toFixed(2)}</td></tr>`);
+          });
+
+        } else {
+          alert("Failed to load billing data: " + data.message);
+        }
+      },
+      error: function () {
+        alert("Error fetching billing data");
+      }
+    });
+  }
+</script>
+
+
+</body>
+</html>

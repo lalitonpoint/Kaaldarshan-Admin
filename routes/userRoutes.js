@@ -17,6 +17,7 @@ router.post('/add_user_ajax',upload.none(),  userController.add_user_ajax);
 router.get('/edit_user/:id', userController.edit_user);
 router.get('/status_change/:id/:Status', userController.status_change);
 router.post('/updateUser/:id', userController.updateUser);
+router.post('/billing_details', userController.aws_billing_details);
 
 
 module.exports = router;
