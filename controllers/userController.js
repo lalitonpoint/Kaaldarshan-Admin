@@ -2,7 +2,7 @@ const { body, validationResult } = require('express-validator');
 const multer = require('multer');
 const multiparty = require('multiparty');  // Require multiparty
 const fs = require('fs');
-
+ require('dotenv').config();
 const path = require('path');
 const { DataTypes } = require('sequelize');
 const { Op } = require('sequelize'); 
@@ -16,6 +16,9 @@ const Category = require('../models/Category');
 const Backend_User = require('../models/User');
 const User = require('../api/models/userModel');
 const { CostExplorerClient, GetCostAndUsageCommand, GetCostForecastCommand } = require("@aws-sdk/client-cost-explorer");
+
+const ACESS_KEY = process.env.ACESS_KEY_AWS;
+const key_secret = process.env.SECRET_KEY_AWS;
 
 
 
@@ -260,8 +263,8 @@ const aws_billing_details = async (req, res) => {
     const client = new CostExplorerClient({
       region: "us-east-1",
       credentials: {
-        accessKeyId: "AKIA4RCAOP57D6QHDEQL",     // Replace with your actual access key
-        secretAccessKey: "Tb9mmOOJipLTy7wWQQkJonEIs1t1gStwUgMAJsQB", // Replac
+        accessKeyId: ACESS_KEY,     // Replace with your actual access key
+        secretAccessKey: key_secret, // Replac
       },
     });
 
@@ -287,31 +290,31 @@ const forecastEnd = "2025-07-31";
 
     // 2. Monthly Total
     const totalCommand = new GetCostAndUsageCommand({
-  TimePeriod: { Start: startDate, End: endDate },
-  Granularity: "MONTHLY",
-  Metrics: ["UnblendedCost"]
-});
+        TimePeriod: { Start: startDate, End: endDate },
+        Granularity: "MONTHLY",
+        Metrics: ["UnblendedCost"]
+        });
     const totalResponse = await client.send(totalCommand);
     const totalCost = totalResponse.ResultsByTime[0].Total.UnblendedCost;
 
     // 3. Forecast
     // 3. Forecast
-const forecastCommand = new GetCostForecastCommand({
-  TimePeriod: { Start: forecastStart, End: forecastEnd },
-  Granularity: "MONTHLY",
-  Metric: "UNBLENDED_COST"
-});
+        const forecastCommand = new GetCostForecastCommand({
+        TimePeriod: { Start: forecastStart, End: forecastEnd },
+        Granularity: "MONTHLY",
+        Metric: "UNBLENDED_COST"
+        });
 
     const forecastResponse = await client.send(forecastCommand);
     const forecast = forecastResponse.Total;
 
     // 4. Service-wise Breakdown
-  const serviceCommand = new GetCostAndUsageCommand({
-  TimePeriod: { Start: startDate, End: endDate },
-  Granularity: "MONTHLY",
-  Metrics: ["UnblendedCost"],
-  GroupBy: [{ Type: "DIMENSION", Key: "SERVICE" }]
-});
+        const serviceCommand = new GetCostAndUsageCommand({
+        TimePeriod: { Start: startDate, End: endDate },
+        Granularity: "MONTHLY",
+        Metrics: ["UnblendedCost"],
+        GroupBy: [{ Type: "DIMENSION", Key: "SERVICE" }]
+        });
     const serviceResponse = await client.send(serviceCommand);
     const serviceData = serviceResponse.ResultsByTime[0].Groups.map(group => ({
       service: group.Keys[0],
