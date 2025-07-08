@@ -358,6 +358,21 @@ app.get('/billing_details', (req, res) => {
     });
 });
 
+app.get('/billing_data', (req, res) => {
+    //console.log(req.session.user);
+    if (!req.session.user) {
+        return res.status(401).json({ message: "You need to log in first." });
+    }
+    const body = 'qr';
+    //console.log(body); // This will log to the server console
+
+    res.render('template', {
+        title: 'Term Page',
+        body: body,
+        user: req.session.user
+    });
+});
+
 app.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) {

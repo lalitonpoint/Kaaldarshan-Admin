@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎨 Custom QR Code Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #ffffff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 40px 45px;
+      border-radius: 18px;
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 520px;
+      transition: all 0.3s ease;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 600;
+      color: #2b2d42;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 6px;
+      font-weight: 500;
+      color: #444;
+    }
+
+    input[type="text"],
+    select,
+    input[type="file"],
+    input[type="color"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #d1d9e6;
+      font-size: 15px;
+      transition: border 0.25s;
+      background: #f9f9fb;
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+      border-color: #0066ff;
+      outline: none;
+      background: #fff;
+    }
+
+    input[type="color"] {
+      padding: 0;
+      height: 46px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 25px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #1e88e5, #1565c0);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(30, 136, 229, 0.3);
+      transition: background 0.3s ease, transform 0.2s;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #1565c0, #0d47a1);
+      transform: translateY(-1px);
+    }
+
+    #result {
+      margin-top: 35px;
+      text-align: center;
+    }
+
+    #result img {
+      max-width: 100%;
+      margin-top: 12px;
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        padding: 30px 20px;
+        border-radius: 14px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🎨 Generate Your Stylish QR Code</h2>
+    <form id="qrForm" enctype="multipart/form-data">
+      <label for="qr_text">QR Text / URL</label>
+      <input type="text" name="qr_text" id="qr_text" placeholder="Enter text or URL" required>
+
+      <label for="fg_color">Foreground Color</label>
+      <input type="color" name="fg_color" id="fg_color" value="#000000">
+
+      <label for="bg_color">Background Color</label>
+      <input type="color" name="bg_color" id="bg_color" value="#ffffff">
+
+      <label for="template">Style Template</label>
+      <select name="template" id="template">
+        <option value="square">Square</option>
+        <option value="dots">Dots</option>
+        <option value="rounded">Rounded</option>
+        <option value="classy">Classy</option>
+        <option value="extra-rounded">Extra Rounded</option>
+      </select>
+
+      <label for="logo">Upload Logo (optional)</label>
+      <input type="file" name="logo" id="logo" accept="image/*">
+
+      <button type="submit">🚀 Generate QR Code</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $('#qrForm').on('submit', function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      $.ajax({
+        url: 'user/generate_custom_qr',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (res) {
+          $('#result').html(`
+            <h3>🖼️ Your QR Code:</h3>
+            <img src="${res.qrImage}" alt="Generated QR Code">
+          `);
+        },
+        error: function () {
+          $('#result').html(`<p style="color:red;">❌ Error generating QR code.</p>`);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,6 +1,8 @@
 const { body, validationResult } = require('express-validator');
 const multer = require('multer');
 const multiparty = require('multiparty');  // Require multiparty
+const { QRCode } = require('@nuintun/qrcode');
+const Jimp = require('jimp');
 const fs = require('fs');
  require('dotenv').config();
 const path = require('path');
@@ -17,6 +19,11 @@ const Backend_User = require('../models/User');
 const User = require('../api/models/userModel');
 const awsbilling  = require('../models/aws_billings_details');
 const { CostExplorerClient, GetCostAndUsageCommand } = require("@aws-sdk/client-cost-explorer");
+
+const puppeteer = require('puppeteer');
+
+
+
 
 const ACESS_KEY = process.env.ACESS_KEY_AWS;
 const key_secret = process.env.SECRET_KEY_AWS;
@@ -398,6 +405,95 @@ const get_aws_billing_data_from_db = async (req, res) => {
   }
 };
 
+const generate_custom_qr = async (req, res) => {
+  const puppeteer = require('puppeteer');
+  const fs = require('fs');
+  const path = require('path');
+
+  try {
+    const {
+      qr_text,
+      fg_color = '#000000',
+      bg_color = '#ffffff',
+      template = 'square'
+    } = req.body;
+
+    if (!qr_text) {
+      return res.status(400).json({ success: false, message: 'QR text is required' });
+    }
+
+    const logoPath = req.file?.path ? `file://${path.resolve(req.file.path)}` : null;
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8" />
+          <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+        </head>
+        <body>
+          <div id="container"></div>
+          <script>
+            const qr = new QRCodeStyling({
+              width: 300,
+              height: 300,
+              data: ${JSON.stringify(qr_text)},
+              image: ${logoPath ? JSON.stringify(logoPath) : null},
+              dotsOptions: {
+                type: ${JSON.stringify(template)},
+                color: ${JSON.stringify(fg_color)}
+              },
+              backgroundOptions: {
+                color: ${JSON.stringify(bg_color)}
+              },
+              imageOptions: {
+                crossOrigin: "anonymous",
+                margin: 5
+              }
+            });
+
+            qr.append(document.getElementById("container"));
+
+            window.getQrDataUrl = async () => {
+              const blob = await qr.getRawData("png");
+              const buffer = await blob.arrayBuffer();
+              const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+              return "data:image/png;base64," + base64;
+            };
+          </script>
+        </body>
+      </html>
+    `;
+
+    const browser = await puppeteer.launch({ headless: 'new' });
+    const page = await browser.newPage();
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+
+    const qrDataUrl = await page.evaluate(async () => {
+      return await window.getQrDataUrl();
+    });
+
+    await browser.close();
+
+    if (req.file?.path) fs.unlinkSync(req.file.path);
+
+    return res.status(200).json({ success: true, qrImage: qrDataUrl });
+
+  } catch (error) {
+    console.error("QR Generation Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "QR generation failed",
+      error: error.message
+    });
+  }
+};
+
+
+
+
+
+
 
 
 
@@ -414,6 +510,7 @@ module.exports = {
     updateUser,
     aws_billing_details,
     get_aws_billing_data_from_db,
+    generate_custom_qr,
     add_user_ajax
    
 };
