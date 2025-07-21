@@ -12,16 +12,13 @@ const jwt = require('jsonwebtoken');
 const Ticket_Raise = require('../models/TicketModel'); // Ensure Sequelize model is defined correctly
 const User = require('../models/userModel'); // Ensure Sequelize model is defined correctly
 const Order = require('../models/Order');
+const ApiHit  =  require('../models/apiHit');
 const ApiData = require('../models/apiData');
 const api_key = process.env.API_KEY_VEDIC;
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 })
-
-
-
-
 
 const raise_ticket = async (req, res) => {
   try {
@@ -239,11 +236,6 @@ const intitiate_order = async (req, res) => {
   }
 };
 
-
-
-
-
-
 const model_data = async (req, res) => {
   try {
     const { dob, tob, selectedLanguage } = req.body;
@@ -308,12 +300,62 @@ const model_data = async (req, res) => {
 };
 
 
+const user_api_call = async (req, res) => {
+  try {
+    const { user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({ success: false, message: 'user_id is required' });
+    }
+
+    // Get completed order with api_hits
+    const orders = await Order.findAll({
+      where: {
+        user_id,
+        status: 'completed'
+      }
+    });
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ success: false, message: 'No orders found for this user' });
+    }
+      await sequelize.sync();
+
+    // Get API hits value from first completed order (or loop if needed)
+    const apiHitsFromOrder = orders[0].api_hits || 0;
+
+    // Find existing api_hits record
+    let hitRecord = await ApiHit.findOne({ where: { user_id } });
+
+    if (hitRecord) {
+      // Check if user has remaining hits
+      if (hitRecord.hits_used >= hitRecord.max_hits) {
+        return res.status(403).json({ success: false, message: 'API hit limit reached' });
+      }
+
+      // Increment hits_used
+      await hitRecord.increment('hits_used', { by: 1 });
+    } else {
+      // Create new record with max_hits from order
+      await ApiHit.create({
+        user_id,
+        max_hits: apiHitsFromOrder,
+        hits_used: 0
+      });
+    }
+    const remaining_hits = hitRecord.max_hits - hitRecord.hits_used;
 
 
+    // ✅ Return the original order response
+    return res.status(200).json({ status:true,message: 'Records Data Found',data: { max_hits: hitRecord.max_hits,hits_used: hitRecord.hits_used,remaining_hits
+  }
+});
 
-
-
-
+  } catch (error) {
+    console.error('Error processing API hit:', error);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
 
 
 module.exports =
@@ -322,7 +364,7 @@ module.exports =
   login,
   forgot_password,
   intitiate_order,
-
+  user_api_call,
   model_data
 
  };
