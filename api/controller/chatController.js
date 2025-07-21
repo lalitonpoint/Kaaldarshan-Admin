@@ -1,0 +1,226 @@
+const { body, validationResult } = require('express-validator');
+const multer = require('multer');
+const multiparty = require('multiparty');  // Require multiparty
+const fs = require('fs');
+
+const path = require('path');
+const { DataTypes } = require('sequelize');
+const { Op } = require('sequelize'); 
+const sequelize = require('../../connection');
+//const db = require('../connection').promise();
+const express = require('express');
+const app = express();
+app.use(express.json()); // For parsing application/json
+app.use(express.urlencoded({ extended: true })); // For parsing form data
+const Blog = require('../../models/blog');
+const About = require('../../models/about');
+
+
+
+
+app.use((req, res, next) => {
+    console.log('Request Headers:', req.headers);
+    console.log('Request Body:', req.body);
+    next();
+});
+
+
+// Multer configuration for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Folder where files will be saved
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Rename file with timestamp
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1 * 1024 * 1024 }, // 1MB limit
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpeg|jpg|png/;
+        const mimetype = filetypes.test(file.mimetype);
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            console.log('Invalid file type:', file.mimetype); // Log invalid file types
+            return cb(new Error('Error: File upload only supports the following filetypes - jpeg, jpg, png'));
+        }
+    }
+});
+
+// controllers/chatController.js
+const twilio = require('twilio');
+const { BedrockAgentRuntimeClient, InvokeAgentCommand } = require('@aws-sdk/client-bedrock-agent-runtime');
+const xmlbuilder = require('xmlbuilder');
+
+const twilioSid = 'ACf0904cd84d595ea43023970bbc23b9fa';
+const twilioToken = '796660eefd62295be442b7e55ab45102';
+const twilioNumber = '+1 951 720 1969';
+
+const awsKey = 'AKIA4RCAOP57D6QHDEQL';
+const awsSecret = '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';
+const awsRegion = 'us-east-1';
+const agentId = 'VUUQHLX44L';
+const aliasId = 'P67YRI6FPV';
+
+const baseUrl = 'https://2e9d3611068b.ngrok-free.app/api/chat'; // 👈 update to your deployed public endpoint
+// At top of chatController.js
+
+
+// === Function: Trigger call ===
+const content = async (req, res) => {
+  try {
+    const number = req.body.number;
+    const client = twilio(twilioSid, twilioToken);
+
+    const call = await client.calls.create({
+      to: number,
+      from: twilioNumber,
+      url: `${baseUrl}/start`,
+      method: 'POST'
+    });
+
+    res.send(`✅ Call initiated to ${number}`);
+  } catch (error) {
+    console.error('❌ Error starting call:', error);
+    res.status(500).send('Call failed');
+  }
+};
+
+// === Function: Start TwiML ===
+const start = (req, res) => {
+  const xml = xmlbuilder.create('Response');
+  xml.ele('Say', {
+    voice: 'Polly.Aditi',
+    language: 'hi-IN'
+  }).text('नमस्ते, मैं HDFC बैंक से श्वेता बोल रही हूँ। आपकी ईएमआई ड्यू है, मैंने सोचा बात कर लूँ। आप अभी फ्री हैं?');
+
+  xml.ele('Gather', {
+    input: 'speech',
+    action: `${baseUrl}/speech`,
+    method: 'POST',
+    timeout: 7,
+    language: 'en-IN'
+  }).ele('Say').text("I'm listening");
+
+  xml.ele('Say').text('Sorry, I did not catch that.');
+
+  res.type('text/xml').send(xml.end({ pretty: true }));
+};
+
+// === Function: Handle speech input ===
+// const speech = async (req, res) => {
+//   const inputText = req.body.SpeechResult || 'Hello';
+
+//   const bedrock = new BedrockAgentRuntimeClient({
+//     region: awsRegion,
+//     credentials: {
+//       accessKeyId: awsKey,
+//       secretAccessKey: awsSecret
+//     }
+//   });
+
+//   let reply = 'Sorry, I could not understand.';
+//   try {
+//     const command = new InvokeAgentCommand({
+//       agentId,
+//       agentAliasId: aliasId,
+//       sessionId: 'session-' + Date.now(),
+//       inputText
+//     });
+
+//     const response = await bedrock.send(command);
+
+//     if (Array.isArray(response.completion)) {
+//       reply = '';
+//       for (const event of response.completion) {
+//         if (event.chunk?.bytes) {
+//           reply += event.chunk.bytes;
+//         }
+//       }
+//     }
+//   } catch (err) {
+//     console.error('❌ Bedrock error:', err);
+//   }
+
+//   const xml = xmlbuilder.create('Response');
+//   xml.ele('Say', { voice: 'Polly.Aditi', language: 'en-IN' }).text(reply);
+//   xml.ele('Gather', {
+//     input: 'speech',
+//     action: `${baseUrl}/speech`,
+//     method: 'POST',
+//     timeout: 5,
+//     language: 'en-IN'
+//   });
+
+//   res.type('text/xml').send(xml.end({ pretty: true }));
+// };
+
+
+
+
+const speech = async (req, res) => {
+  console.log('🎙️ SpeechResult:', req.body.SpeechResult);
+
+  const inputText = req.body.SpeechResult || 'Hello';
+console.log('🎙️ SpeechResuhjbdhjwbhjfwebrlt:', inputText);
+
+  const bedrock = new BedrockAgentRuntimeClient({
+    region: awsRegion,
+    credentials: {
+      accessKeyId: awsKey,
+      secretAccessKey: awsSecret
+    }
+  });
+
+  let reply = 'Sorry, I could not understand.';
+
+  try {
+    const command = new InvokeAgentCommand({
+      agentId,
+      agentAliasId: aliasId,
+      sessionId: 'session_01111',
+      inputText
+    });
+
+    const response = await bedrock.send(command);
+
+    // If streaming, iterate through .completion
+    if (response.completion) {
+      reply = '';
+      for await (const event of response.completion) {
+        if (event.chunk?.bytes) {
+          reply += new TextDecoder().decode(event.chunk.bytes);
+        }
+      }
+    }
+  } catch (err) {
+    console.error('❌ Bedrock error:', err);
+  }
+
+  const xml = xmlbuilder.create('Response');
+  xml.ele('Say', { voice: 'Polly.Aditi', language: 'en-IN' }).text(reply);
+  xml.ele('Gather', {
+    input: 'speech',
+    action: `${baseUrl}/speech`,
+    method: 'POST',
+    timeout: 5,
+    language: 'en-IN'
+  });
+
+  res.type('text/xml').send(xml.end({ pretty: true }));
+};
+
+
+module.exports = {
+  content,
+  start,
+  speech
+};
+
+
+

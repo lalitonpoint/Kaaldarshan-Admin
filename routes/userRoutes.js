@@ -13,6 +13,7 @@ router.use(express.urlencoded({ extended: true }));
 
 // routes/userRoutes.js
 router.post('/get_all_user_ajax', userController.get_all_user_ajax);
+
 router.post('/add_user_ajax',upload.none(),  userController.add_user_ajax);
 router.get('/edit_user/:id', userController.edit_user);
 router.get('/status_change/:id/:Status', userController.status_change);

@@ -487,11 +487,9 @@ const generate_custom_qr = async (req, res) => {
       error: error.message
     });
   }
+
+  
 };
-
-
-
-
 
 
 
@@ -511,6 +509,7 @@ module.exports = {
     aws_billing_details,
     get_aws_billing_data_from_db,
     generate_custom_qr,
+
     add_user_ajax
    
 };

@@ -5,6 +5,7 @@ const session = require('express-session');
 const app = express();
 app.use(express.static(path.join(__dirname, 'public'))); // ✅ This line is required
 const db = require('./connection');
+
 const authMiddleware = require('./middleware/authMiddleware');
 const authenticateJWT = require('./api/middleware/authentication'); // 
 const customHealper = require('./healpers/custom_healper');
@@ -21,6 +22,7 @@ const term_conditionRoutes = require('./routes/termRoutes');
 const privacyRoutes = require('./routes/privacyRoutes');
 const help_support = require('./routes/helpSupportRoutes');
 const transacton_record = require('./routes/transactionRoutes');
+const chat  = require('./api/routes/chat');
 // const billing = require('./routes/billingRoutes');
 const apiRoutes = require('./api/routes/indexRoutes'); // Import the route
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -44,6 +46,19 @@ app.use('/api', (req, res, next) => {
       return next();
     }
      if (req.path === '/signup/login') {
+      // Bypass JWT for /signup
+      return next();
+    }
+     if (req.path === '/chat/starttt') {
+      // Bypass JWT for /signup
+      return next();
+    }
+
+    if (req.path === '/chat/start') {
+      // Bypass JWT for /signup
+      return next();
+    }
+    if (req.path === '/chat/speech') {
       // Bypass JWT for /signup
       return next();
     }
@@ -72,6 +87,7 @@ app.use('/privacy_policy',privacyRoutes);
 app.use('/help_support', help_support);
 app.use('/about',aboutusRoutes);
 app.use('/transacton_record',transacton_record);
+app.use('/ai_call',chat);
 // app.use('/billing_details',billing);
 app.use('/healer', healerRoutes);  // URL will be /category/add_category_ajax
 app.use('/banner', bannerRoutes);  // URL will be /category/add_category_ajax
@@ -364,6 +380,21 @@ app.get('/billing_data', (req, res) => {
         return res.status(401).json({ message: "You need to log in first." });
     }
     const body = 'qr';
+    //console.log(body); // This will log to the server console
+
+    res.render('template', {
+        title: 'Term Page',
+        body: body,
+        user: req.session.user
+    });
+});
+
+app.get('/ai_call', (req, res) => {
+    //console.log(req.session.user);
+    // if (!req.session.user) {
+    //     return res.status(401).json({ message: "You need to log in first." });
+    // }
+    const body = 'chat';
     //console.log(body); // This will log to the server console
 
     res.render('template', {
