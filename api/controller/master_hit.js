@@ -70,17 +70,6 @@ const content = async (req, res) => {
 
  
 
-
-
-
-
-
-
-
-
-
-
-
 module.exports =
  { 
   content
