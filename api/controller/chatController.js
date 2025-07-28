@@ -67,7 +67,7 @@ const awsRegion = 'us-east-1';
 const agentId = 'VUUQHLX44L';
 const aliasId = 'P67YRI6FPV';
 
-const baseUrl = 'https://2e9d3611068b.ngrok-free.app/api/chat'; // 👈 update to your deployed public endpoint
+const baseUrl = 'https://c7befa9349d5.ngrok-free.app/api/chat'; // 👈 update to your deployed public endpoint
 // At top of chatController.js
 
 
@@ -97,70 +97,21 @@ const start = (req, res) => {
   xml.ele('Say', {
     voice: 'Polly.Aditi',
     language: 'hi-IN'
-  }).text('नमस्ते, मैं HDFC बैंक से श्वेता बोल रही हूँ। आपकी ईएमआई ड्यू है, मैंने सोचा बात कर लूँ। आप अभी फ्री हैं?');
+  }).text('नमस्ते, मैं Appsquadz से दीपक की बंदी बोल रही हूँ । आपकी ईएमआई ड्यू है, मैंने सोचा बात कर लूँ। आप अभी फ्री हैं?');
 
   xml.ele('Gather', {
     input: 'speech',
     action: `${baseUrl}/speech`,
     method: 'POST',
-    timeout: 7,
-    language: 'en-IN'
+    timeout: 2, // ⏱ Reduced to 2 seconds
+    language: 'en-IN',
+    bargeIn: true // 👂 Optional: for interrupting
   }).ele('Say').text("I'm listening");
 
   xml.ele('Say').text('Sorry, I did not catch that.');
 
   res.type('text/xml').send(xml.end({ pretty: true }));
 };
-
-// === Function: Handle speech input ===
-// const speech = async (req, res) => {
-//   const inputText = req.body.SpeechResult || 'Hello';
-
-//   const bedrock = new BedrockAgentRuntimeClient({
-//     region: awsRegion,
-//     credentials: {
-//       accessKeyId: awsKey,
-//       secretAccessKey: awsSecret
-//     }
-//   });
-
-//   let reply = 'Sorry, I could not understand.';
-//   try {
-//     const command = new InvokeAgentCommand({
-//       agentId,
-//       agentAliasId: aliasId,
-//       sessionId: 'session-' + Date.now(),
-//       inputText
-//     });
-
-//     const response = await bedrock.send(command);
-
-//     if (Array.isArray(response.completion)) {
-//       reply = '';
-//       for (const event of response.completion) {
-//         if (event.chunk?.bytes) {
-//           reply += event.chunk.bytes;
-//         }
-//       }
-//     }
-//   } catch (err) {
-//     console.error('❌ Bedrock error:', err);
-//   }
-
-//   const xml = xmlbuilder.create('Response');
-//   xml.ele('Say', { voice: 'Polly.Aditi', language: 'en-IN' }).text(reply);
-//   xml.ele('Gather', {
-//     input: 'speech',
-//     action: `${baseUrl}/speech`,
-//     method: 'POST',
-//     timeout: 5,
-//     language: 'en-IN'
-//   });
-
-//   res.type('text/xml').send(xml.end({ pretty: true }));
-// };
-
-
 
 
 const speech = async (req, res) => {
@@ -183,7 +134,7 @@ console.log('🎙️ SpeechResuhjbdhjwbhjfwebrlt:', inputText);
     const command = new InvokeAgentCommand({
       agentId,
       agentAliasId: aliasId,
-      sessionId: 'session_01111',
+      sessionId: 'session_1211',
       inputText
     });
 
