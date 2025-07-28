@@ -57,15 +57,16 @@ const twilio = require('twilio');
 const { BedrockAgentRuntimeClient, InvokeAgentCommand } = require('@aws-sdk/client-bedrock-agent-runtime');
 const xmlbuilder = require('xmlbuilder');
 
-const twilioSid = 'ACf0904cd84d595ea43023970bbc23b9fa';
-const twilioToken = '796660eefd62295be442b7e55ab45102';
-const twilioNumber = '+1 951 720 1969';
+require('dotenv').config();
+const twilioSid = process.env.twilioSid;;
+const twilioToken = process.env.twilioToken;
+const twilioNumber = process.env.twilioNumber; // Default Twilio number if not set
 
-const awsKey = 'AKIA4RCAOP57D6QHDEQL';
-const awsSecret = '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';
-const awsRegion = 'us-east-1';
-const agentId = 'VUUQHLX44L';
-const aliasId = 'P67YRI6FPV';
+const awsKey = process.env.awsKey;;
+const awsSecret = process.env.awsSecret;
+const awsRegion = process.env.awsRegion; // Default region if not set
+const agentId = process.env.agentId; // Your Bedrock agent ID
+const aliasId = process.env.aliasId; // Your Bedrock agent alias ID
 
 const baseUrl = 'https://c7befa9349d5.ngrok-free.app/api/chat'; // 👈 update to your deployed public endpoint
 // At top of chatController.js
