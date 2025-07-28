@@ -68,7 +68,7 @@ const awsRegion = process.env.awsRegion; // Default region if not set
 const agentId = process.env.agentId; // Your Bedrock agent ID
 const aliasId = process.env.aliasId; // Your Bedrock agent alias ID
 
-const baseUrl = 'https://c7befa9349d5.ngrok-free.app/api/chat'; // 👈 update to your deployed public endpoint
+const baseUrl = process.env.baseUrl; // 👈 update to your deployed public endpoint
 // At top of chatController.js
 
 
